@@ -16,8 +16,9 @@ def main_script():
             structured_pipeline.pre_processing() 
             print("\nPreprocessing stage successful\n")
 
-        except:
+        except Exception as e:
 
+            print(e)
             print("\nError in Preprocessing stage\n")
 
     if parser.get('FLAGS','execute.modelling').lower() =='true':
@@ -28,8 +29,9 @@ def main_script():
             structured_pipeline.modelling()
             print("\nModelling stage successful\n")
 
-        except:
+        except Exception as e:
 
+            print(e)
             print("\nError in Modelling stage\n")
 
 
