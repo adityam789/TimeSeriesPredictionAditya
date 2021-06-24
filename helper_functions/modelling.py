@@ -32,7 +32,13 @@ def model_making():
  		scaler=pickle.load(f)
 	with open(config.get('data_path', 'df1'), 'rb') as f:
  		df1=pickle.load(f)
+	with open(config.get('data_path', 'test_data_change_detected_ADWIN'), 'rb') as f:
+ 		test_data_change_detected_ADWIN=pickle.load(f)
+	with open(config.get('data_path', 'train_data_change_detected_ADWIN'), 'rb') as f:
+ 		train_data_change_detected_ADWIN=pickle.load(f)
 
+
+	# Model 1 without Concept Drift (With Test Data) 
 
 	model = Sequential()
 	model.add(LSTM(50, return_sequences=True, input_shape=(X_train.shape[1],1)))   
@@ -42,15 +48,57 @@ def model_making():
 	model.add(Dense(1))
 	model.compile(optimizer='adam', loss='mean_squared_error')
 	print( model.summary())
+
 	model.fit(X_train,y_train,validation_data=(X_test,ytest),epochs=config.getint('model_params','epochs'),batch_size=config.getint('model_params','batch_size'),verbose=1)
 	train_predict=model.predict(X_train)
 	test_predict=model.predict(X_test)
-	print(math.sqrt(mean_squared_error(y_train,train_predict)),math.sqrt(mean_squared_error(ytest,test_predict)))
-	print(math.sqrt(mean_squared_error(ytest,test_predict)))   
-	print(mean_absolute_error(ytest,test_predict))
-	print( r2_score(ytest,test_predict))
-	train_predict=scaler.inverse_transform(train_predict)
-	test_predict=scaler.inverse_transform(test_predict)
+
+	# print(math.sqrt(mean_squared_error(y_train,train_predict)),math.sqrt(mean_squared_error(ytest,test_predict)))
+	# print(math.sqrt(mean_squared_error(ytest,test_predict)))   
+	# print(mean_absolute_error(ytest,test_predict))
+	# print( r2_score(ytest,test_predict))
+	# train_predict=scaler.inverse_transform(train_predict)
+	# test_predict=scaler.inverse_transform(test_predict)
+
+	# Model 2 with Concept Drift (Without Test Data) 
+
+	model2 = Sequential()
+	model2.add(LSTM(50, return_sequences=True, input_shape=(X_train.shape[1],1)))   
+	# model.add(LSTM(50, return_sequences=True, input_shape=(100,1))) 
+	model2.add(LSTM(50, return_sequences=False))
+	model2.add(Dense(25))
+	model2.add(Dense(1))
+	model2.compile(optimizer='adam', loss='mean_squared_error')
+	print( model2.summary())
+
+	predict1 = np.array([[1]])
+	predict2 = np.array([[1]])
+	for k in range(len(train_data_change_detected_ADWIN)-1):
+		X_batch = X_train[train_data_change_detected_ADWIN[k]:train_data_change_detected_ADWIN[k+1]]
+		y_batch = y_train[train_data_change_detected_ADWIN[k]:train_data_change_detected_ADWIN[k+1]]
+		y_pred = model2.predict_on_batch(X_batch)
+		predict1 = np.concatenate((predict1, y_pred), axis=0)
+		up_y = y_batch
+		a_score = math.sqrt(mean_squared_error(y_batch.flatten(), y_pred.flatten()))
+		w = model2.layers[0].get_weights() #Only get weights for LSTM layer
+		for l in range(len(w)):
+			w[l] = w[l] - (w[l]*0.001*a_score) #0.001=learning rate
+		model2.layers[0].set_weights(w)
+		model2.fit(X_batch, up_y, epochs=10, verbose=1)
+		pred2 = model2.predict_on_batch(X_batch)
+		predict2 = np.concatenate((predict2, pred2), axis=0)
+		model2.reset_states()
+	
+	predict1 = np.delete(predict1,0,0)
+	predict2 = np.delete(predict2,0,0)
+
+	print(math.sqrt(mean_squared_error(y_train,predict2.flatten())))
+	# print(math.sqrt(mean_squared_error(y_train,train_predict)),math.sqrt(mean_squared_error(ytest,test_predict)))
+	# print(math.sqrt(mean_squared_error(ytest,test_predict)))   
+	# print(mean_absolute_error(ytest,test_predict))
+	# print( r2_score(ytest,test_predict))
+	# train_predict=scaler.inverse_transform(train_predict)
+	# test_predict=scaler.inverse_transform(test_predict)
 
 
 	models_path_folder = config.get('models_path','models_path_folder')
