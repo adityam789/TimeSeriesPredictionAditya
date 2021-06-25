@@ -124,6 +124,7 @@ def preprocessing():
 	X_test, ytest = create_dataset(test_data, time_step)
 	X_train = X_train.reshape(X_train.shape[0], X_train.shape[1], 1)
 	X_test = X_test.reshape(X_test.shape[0], X_test.shape[1], 1)
+	
 	train_data_change_detected, test_data_change_detected = change_detector_adwin(
 	    df2, X_train.shape[0])
 
