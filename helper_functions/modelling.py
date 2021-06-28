@@ -15,6 +15,7 @@ from tensorflow.keras.layers import Dense
 from tensorflow.keras.layers import LSTM
 
 from .Graph.graph_execute import *
+
 config=cp.RawConfigParser()
 config.read('config/config.properties')
 

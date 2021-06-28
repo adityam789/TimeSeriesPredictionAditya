@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 import configparser as cp
 import pickle
 import os 
@@ -185,3 +186,30 @@ def plot_difference(model1_predict, model2_predict):
     if not os.path.exists(config.get('vis','vis_path_folder')):
         os.makedirs( config.get('vis','vis_path_folder'))
     plt.savefig(config.get('vis','vis_path_folder') + '/performance_comparison.png')
+
+def graphMovingAverage(df):
+	target_column = config.get('target_column', 'target_column')
+	df_10 = pd.DataFrame()
+	df_10[target_column] = df[target_column].rolling(window=10).mean()
+	df_20 = pd.DataFrame()
+	df_20[target_column] = df[target_column].rolling(window=20).mean()
+	df_30 = pd.DataFrame()
+	df_30[target_column] = df[target_column].rolling(window=30).mean()
+	df_40 = pd.DataFrame()
+	df_40[target_column] = df[target_column].rolling(window=40).mean()
+
+	# Visualize the data
+	plt.figure(figsize=(8, 4))
+	plt.plot(df[target_column].tail(200), label='df')
+	plt.plot(df_10[target_column].tail(200), label='df_10')
+	plt.plot(df_20[target_column].tail(200), label='df_20')
+	# plt.plot(df_30[target_column].tail(200), label='df_30')
+	# plt.plot(df_40[target_column].tail(200), label='df_40')
+	plt.title('Apple Close Price History')
+	plt.xlabel('Mar. 23, 2008 - Nov. 10, 2017')
+	plt.ylabel('Close Price USD($)')
+	plt.legend(loc='upper left')
+
+	if not os.path.exists(config.get('vis', 'vis_path_folder')):
+		os.makedirs(config.get('vis', 'vis_path_folder'))
+	plt.savefig(config.get('vis', 'vis_path_folder') + '/mean_plot.png')
