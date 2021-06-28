@@ -1,4 +1,3 @@
-# import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.preprocessing import MinMaxScaler 
@@ -14,7 +13,8 @@ from sklearn.metrics import r2_score
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
 from tensorflow.keras.layers import LSTM
-#plt.style.use('fivethirtyeight')
+
+from .Graph.graph_execute import *
 config=cp.RawConfigParser()
 config.read('config/config.properties')
 
@@ -42,7 +42,6 @@ def model_making():
 
 	model = Sequential()
 	model.add(LSTM(50, return_sequences=True, input_shape=(X_train.shape[1],1)))   
-	# model.add(LSTM(50, return_sequences=True, input_shape=(100,1))) 
 	model.add(LSTM(50, return_sequences=False))
 	model.add(Dense(25))
 	model.add(Dense(1))
@@ -53,18 +52,19 @@ def model_making():
 	train_predict=model.predict(X_train)
 	test_predict=model.predict(X_test)
 
+	# Scores
 	# print(math.sqrt(mean_squared_error(y_train,train_predict)),math.sqrt(mean_squared_error(ytest,test_predict)))
 	# print(math.sqrt(mean_squared_error(ytest,test_predict)))   
 	# print(mean_absolute_error(ytest,test_predict))
 	# print( r2_score(ytest,test_predict))
-	# train_predict=scaler.inverse_transform(train_predict)
-	# test_predict=scaler.inverse_transform(test_predict)
+
+	train_predict=scaler.inverse_transform(train_predict)
+	test_predict=scaler.inverse_transform(test_predict)
 
 	# Model 2 with Concept Drift (Without Test Data) 
 
 	model2 = Sequential()
 	model2.add(LSTM(50, return_sequences=True, input_shape=(X_train.shape[1],1)))   
-	# model.add(LSTM(50, return_sequences=True, input_shape=(100,1))) 
 	model2.add(LSTM(50, return_sequences=False))
 	model2.add(Dense(25))
 	model2.add(Dense(1))
@@ -92,14 +92,9 @@ def model_making():
 	predict1 = np.delete(predict1,0,0)
 	predict2 = np.delete(predict2,0,0)
 
-	print(math.sqrt(mean_squared_error(y_train,predict2.flatten())))
-	# print(math.sqrt(mean_squared_error(y_train,train_predict)),math.sqrt(mean_squared_error(ytest,test_predict)))
-	# print(math.sqrt(mean_squared_error(ytest,test_predict)))   
-	# print(mean_absolute_error(ytest,test_predict))
-	# print( r2_score(ytest,test_predict))
-	# train_predict=scaler.inverse_transform(train_predict)
-	# test_predict=scaler.inverse_transform(test_predict)
-
+	# Scores
+	RMSE = math.sqrt(mean_squared_error(y_train,predict2.flatten()))
+	print(RMSE)
 
 	models_path_folder = config.get('models_path','models_path_folder')
 
@@ -109,32 +104,22 @@ def model_making():
 	model_name = config.get('models_path','model_name')
 	model.save(models_path_folder+ model_name)
 
-	#shift train predictions for plotting
-	## Plotting 
-    #vis of graphs
-	look_back=X_train.shape[1]
-	trainPredictPlot = np.empty_like(df1)		
-	trainPredictPlot[:, :] = np.nan
-	trainPredictPlot[look_back:len(train_predict)+look_back, :] = train_predict
-	# shift test predictions for plotting
-	testPredictPlot = np.empty_like(df1)
-	testPredictPlot[:, :] = np.nan
-	testPredictPlot[len(train_predict)+(look_back*2)+1:len(df1)-1, :] = test_predict
-	# Visualize the data
-	plt.figure(figsize=(8,4))
-	plt.title('Model')
-	plt.xlabel('Date', fontsize=18)
-	plt.ylabel('Close Price USD ($)', fontsize=18)
-	# plot baseline and predictions
-	plt.plot(scaler.inverse_transform(df1),label='True')
-	plt.plot(trainPredictPlot,label='Train')
-	plt.plot(testPredictPlot,label='Test')		
-	if not os.path.exists(config.get('vis','vis_path_folder')):
-		os.makedirs( config.get('vis','vis_path_folder'))
-	plt.savefig(config.get('vis','vis_path_folder') + '/model_performance.png')
+	#..........................
+
+	# Plot Shobit data:
+
+	plotGraphShobit(X_train, df1, train_predict, test_predict)
   
 	#..........................
 
+	# Plot Aditya data:
+	error_stream = []
+	for i in range(y_train.size):
+		error_stream.append(abs(y_train[i] - predict2[i][0]))
+	Plot_graph_series(y_train, predict2, train_data_change_detected_ADWIN, 10, RMSError= RMSE, name="homer")
+	plotGraphError(y_train, train_data_change_detected_ADWIN, error_stream, 10, "homer")
+
+	#..........................
 
 	# demonstrate prediction for next 10 days
 	n_steps=config.getint('features','time_step')+1
