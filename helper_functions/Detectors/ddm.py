@@ -1,9 +1,7 @@
 import math
 import numbers
 
-from .DriftDetector import *
-
-class DDM(DriftDetector):
+class DDM():
     """
     Drift Detection Method.
     DDM (Drift Detection Method) is a concept change detection method

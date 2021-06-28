@@ -8,18 +8,13 @@ import configparser as cp
 import os
 import pickle
 import matplotlib.pyplot as plt
-# from .Detectors.adwin import *
-# from .Detectors.ddm import DDM
-from skmultiflow.drift_detection.adwin import ADWIN
-adwin = ADWIN()
+from .Detectors.drift_detector import *
 plt.style.use('fivethirtyeight')
 
 config = cp.RawConfigParser()
 config.read('config/config.properties')
 
  # convert an array of values into a dataset matrix
-
-
 def create_dataset(dataset, time_step=1):
 
     dataX, dataY = [], []
@@ -28,37 +23,6 @@ def create_dataset(dataset, time_step=1):
         dataX.append(a)
         dataY.append(dataset[i + time_step, 0])
     return np.array(dataX), np.array(dataY)
-
-def change_detector_adwin(df, training_size):
-    print(training_size)
-    change_detected = []
-    train_data_change_detected = [0]
-    test_data_change_detected = [training_size]
-    for i in range(df.size):
-        if i < training_size:
-            adwin.add_element(df.iat[i, 0])
-            # if adwin.detected_warning_zone():
-            #     print('Warning detected in data: ' + str(df.iat[i,0]) + ' - at index: ' + str(i))
-            if adwin.detected_change():
-                train_data_change_detected.append(i)
-                change_detected.append(i)
-                print('Change detected in data: ' +
-                      str(df.iat[i, 0]) + ' - at index: ' + str(i))
-        else:
-            adwin.add_element(df.iat[i, 0])
-            # if adwin.detected_warning_zone():
-            #     print('Warning detected in data: ' + str(df.iat[i,0]) + ' - at index: ' + str(i))
-            if adwin.detected_change():
-                test_data_change_detected.append(i)
-                change_detected.append(i)
-                print('Change detected in data: ' +
-                      str(df.iat[i, 0]) + ' - at index: ' + str(i))
-    if train_data_change_detected[-1] != training_size:
-        train_data_change_detected += [training_size]
-    test_data_change_detected += [df.size]
-    print(train_data_change_detected)
-    return train_data_change_detected, test_data_change_detected, change_detected
-
 
 def preprocessing():
 
@@ -108,8 +72,8 @@ def preprocessing():
 	X_train = X_train.reshape(X_train.shape[0], X_train.shape[1], 1)
 	X_test = X_test.reshape(X_test.shape[0], X_test.shape[1], 1)
 	
-	train_data_change_detected, test_data_change_detected, drifts_detected = change_detector_adwin(
-	    df2, X_train.shape[0])
+	train_data_change_detected, test_data_change_detected, drifts_detected = detector(
+	    df2, X_train.shape[0], "ADWIN")
 
 	if not os.path.exists(config.get('data_path', 'data_path_folder')):
 		os.makedirs(config.get('data_path', 'data_path_folder'))
