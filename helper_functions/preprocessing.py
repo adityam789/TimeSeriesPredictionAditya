@@ -29,28 +29,9 @@ def create_dataset(dataset, time_step=1):
         dataY.append(dataset[i + time_step, 0])
     return np.array(dataX), np.array(dataY)
 
-# def change_detector(data_stream):
-
-#     import numpy as np
-#     ddm = DDM()
-#     change_detect = [0]
-#     warning_detect = [0]
-#     # Update drift detector and verify if change is detected
-#     for i in range(data_stream.size):
-#         in_drift, in_warning = ddm.update(data_stream.iat[i,0])
-#         if in_drift:
-#             change_detect.append(i)
-#             print("Change detected at index {i}, input value: {data_stream.iat[i,0]}")
-#         if in_warning:
-#             warning_detect.append(i)
-#             print("Change detected at index {i}, input value: {data_stream.iat[i,0]}")
-#     change_detect.append(data_stream.size)
-#     warning_detect.append(data_stream.size)
-#     return change_detect, warning_detect
-
-
 def change_detector_adwin(df, training_size):
     print(training_size)
+    change_detected = []
     train_data_change_detected = [0]
     test_data_change_detected = [training_size]
     for i in range(df.size):
@@ -60,6 +41,7 @@ def change_detector_adwin(df, training_size):
             #     print('Warning detected in data: ' + str(df.iat[i,0]) + ' - at index: ' + str(i))
             if adwin.detected_change():
                 train_data_change_detected.append(i)
+                change_detected.append(i)
                 print('Change detected in data: ' +
                       str(df.iat[i, 0]) + ' - at index: ' + str(i))
         else:
@@ -68,13 +50,14 @@ def change_detector_adwin(df, training_size):
             #     print('Warning detected in data: ' + str(df.iat[i,0]) + ' - at index: ' + str(i))
             if adwin.detected_change():
                 test_data_change_detected.append(i)
+                change_detected.append(i)
                 print('Change detected in data: ' +
                       str(df.iat[i, 0]) + ' - at index: ' + str(i))
     if train_data_change_detected[-1] != training_size:
         train_data_change_detected += [training_size]
     test_data_change_detected += [df.size]
     print(train_data_change_detected)
-    return train_data_change_detected, test_data_change_detected
+    return train_data_change_detected, test_data_change_detected, change_detected
 
 
 def preprocessing():
@@ -125,7 +108,7 @@ def preprocessing():
 	X_train = X_train.reshape(X_train.shape[0], X_train.shape[1], 1)
 	X_test = X_test.reshape(X_test.shape[0], X_test.shape[1], 1)
 	
-	train_data_change_detected, test_data_change_detected = change_detector_adwin(
+	train_data_change_detected, test_data_change_detected, drifts_detected = change_detector_adwin(
 	    df2, X_train.shape[0])
 
 	if not os.path.exists(config.get('data_path', 'data_path_folder')):
@@ -147,6 +130,8 @@ def preprocessing():
 		pickle.dump(test_data_change_detected, f)
 	with open(config.get('data_path', 'train_data_change_detected_ADWIN'), 'wb') as f:
 		pickle.dump(train_data_change_detected, f)	
+	with open(config.get('data_path', 'change_detected_ADWIN'), 'wb') as f:
+		pickle.dump(drifts_detected, f)	
 	# dump(scaler, open('scaler.pkl', 'wb'))
 
 	print(df1.shape)
