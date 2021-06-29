@@ -12,7 +12,7 @@ from .Detectors.drift_detector import *
 from .Graph.graph_execute import *
 plt.style.use('fivethirtyeight')
 
-print('Hello')
+
 config = cp.RawConfigParser()
 config.read('config/config.properties')
 
