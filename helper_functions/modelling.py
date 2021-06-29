@@ -115,10 +115,17 @@ def model_making():
 
 	# Plot Aditya data:
 	error_stream = []
+	y_train = scaler.inverse_transform(y_train.reshape(-1, 1)).flatten()
+	predict2 = scaler.inverse_transform(predict2)
 	for i in range(y_train.size):
 		error_stream.append(abs(y_train[i] - predict2[i][0]))
 	Plot_graph_series(y_train, predict2, train_data_change_detected_ADWIN, 10, RMSError= RMSE, name="homer")
 	plotGraphError(y_train, train_data_change_detected_ADWIN, error_stream, 10, "homer")
+
+	#..........................
+
+	# Plot Comparison data:
+	plot_difference(train_predict, predict2, y_train)
 
 	#..........................
 

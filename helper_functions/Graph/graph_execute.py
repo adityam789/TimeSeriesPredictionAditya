@@ -25,9 +25,6 @@ def Plot_graph_series(stream, prediction_vector, detections, n, alarms=None,  de
     X_axis = [0] * 2
     X_axis[0] = 0
     X_axis[1] = len(stream)
-    Y_axis_error = [0] * 2
-    Y_axis_error[0] = 0
-    Y_axis_error[1] = 0.2
     X_intervals = range(X_axis[0], X_axis[1], 900)
 
     label_detection_found = 'Drift Found'
@@ -81,6 +78,8 @@ def Plot_graph_series(stream, prediction_vector, detections, n, alarms=None,  de
     #showing graphic
     plt.show()
 
+    plt.close()
+
 
 def plotGraphError(stream, detections, error_stream_vector, n, name):
 
@@ -98,9 +97,6 @@ def plotGraphError(stream, detections, error_stream_vector, n, name):
     X_axis = [0] * 2
     X_axis[0] = 0
     X_axis[1] = len(stream)
-    Y_axis_error = [0] * 2
-    Y_axis_error[0] = 0
-    Y_axis_error[1] = 0.2
     X_intervals = range(X_axis[0], X_axis[1], 900)
 
     # Creating a figure
@@ -130,16 +126,16 @@ def plotGraphError(stream, detections, error_stream_vector, n, name):
     plt.ylabel('RMSError')
     plt.xlabel('Time')
     grafico2.legend(loc='upper center', ncol=1, fancybox=True, shadow=True)
-    grafico2.axis([X_axis[0], X_axis[1], Y_axis_error[0], 0.06])
+    # grafico2.axis([X_axis[0], X_axis[1], Y_axis_error[0], 0.06])
     # plt.xticks(X_intervals, rotation=45)
-
-    #showing graphic
-    plt.show()
     
     #saving graphic
     if not os.path.exists(config.get('vis','vis_path_folder')):
         os.makedirs( config.get('vis','vis_path_folder'))
     plt.savefig(config.get('vis','vis_path_folder') + '/MAE.png')
+
+    #showing graphic
+    plt.show()
 
 def plotGraphShobit(X_train, df1, train_predict, test_predict, scaler):
     #shift train predictions for plotting
@@ -166,23 +162,27 @@ def plotGraphShobit(X_train, df1, train_predict, test_predict, scaler):
 		os.makedirs( config.get('vis','vis_path_folder'))
 	plt.savefig(config.get('vis','vis_path_folder') + '/model_performance.png')
 
-def plot_difference(model1_predict, model2_predict):
-    size = model1_predict.size()
+def plot_difference(model1_predict, model2_predict, real):
+    size = model1_predict.size
     x_axis = np.arange(size)
-    plt.plot(x_axis, model1_predict, 'r-', label='without_drift')
-    plt.plot(x_axis, model2_predict, 'b-', label='with_drift')
+    plt.plot(x_axis, model1_predict, 'r-', label='without_drift', linewidth=0.5)
+    plt.plot(x_axis, model2_predict, 'b-', label='with_drift', linewidth=0.5)
+    plt.plot(x_axis, real, 'g-', label='Real Values', linewidth=0.5)
     plt.title("Model Comparison")
     # putting caption and defining the graphic axes
     plt.ylabel('Observations')
     plt.xlabel('Index')
     plt.legend()
-    #showing graphic
-    plt.show()
     
     #saving graphic
     if not os.path.exists(config.get('vis','vis_path_folder')):
         os.makedirs( config.get('vis','vis_path_folder'))
     plt.savefig(config.get('vis','vis_path_folder') + '/performance_comparison.png')
+
+    #showing graphic
+    plt.show()
+
+    plt.close()
 
 def graphMovingAverage(df):
 	target_column = config.get('target_column', 'target_column')
