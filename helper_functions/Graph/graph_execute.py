@@ -9,9 +9,6 @@ plt.style.use('seaborn-white')
 config=cp.RawConfigParser()
 config.read('config/config.properties')
 
-with open(config.get('data_path', 'scaler_dump'), 'rb') as f:
- 	scaler=pickle.load(f)
-
 def Plot_graph_series(stream, prediction_vector, detections, n, alarms=None,  delays=None, false_alarms=None, execution_time=None, RMSError=None, hitRatio=None, name=None):
 
     # style of some graphics functions
@@ -144,7 +141,7 @@ def plotGraphError(stream, detections, error_stream_vector, n, name):
         os.makedirs( config.get('vis','vis_path_folder'))
     plt.savefig(config.get('vis','vis_path_folder') + '/MAE.png')
 
-def plotGraphShobit(X_train, df1, train_predict, test_predict):
+def plotGraphShobit(X_train, df1, train_predict, test_predict, scaler):
     #shift train predictions for plotting
 	## Plotting 
     #vis of graphs

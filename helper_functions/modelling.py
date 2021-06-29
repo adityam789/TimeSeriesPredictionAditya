@@ -109,7 +109,7 @@ def model_making():
 
 	# Plot Shobit data:
 
-	plotGraphShobit(X_train, df1, train_predict, test_predict)
+	plotGraphShobit(X_train, df1, train_predict, test_predict, scaler)
   
 	#..........................
 
