@@ -7,7 +7,10 @@ import pandas as pd
 config=cp.RawConfigParser()
 config.read('config/config.properties')
 
-    
+dirname = config.get('json_result','json_result_path_folder')
+if not os.path.exists(dirname):
+	os.makedirs(dirname)
+
 json_report = dict()
 sep = '/'
 
@@ -53,8 +56,41 @@ def modelling_stage():
         d1= {'img_path': mdl_pred}
         model_predection.update(d1)
 
+    model_with_drift_detection_performance = {}
+    if config.getboolean('vis', 'model_with_drift_detection_performance'):
+        mdl_pred = sep.join([config.get('vis', 'vis_path_folder'),
+                                     'model_performance_CD.png'])
+        d1= {'img_path': mdl_pred}
+        model_predection.update(d1)
+
+    model_with_drift_detection_MAE = {}
+    if config.getboolean('vis', 'model_with_drift_detection_MAE'):
+        mdl_pred = sep.join([config.get('vis', 'vis_path_folder'),
+                                     'MAE.png'])
+        d1= {'img_path': mdl_pred}
+        model_predection.update(d1)
+
+    models_comparison = {}
+    if config.getboolean('vis', 'models_comparison'):
+        mdl_pred = sep.join([config.get('vis', 'vis_path_folder'),
+                                     'performance_comparison.png'])
+        d1= {'img_path': mdl_pred}
+        model_predection.update(d1)
+
+    models_MAE_comparison = {}
+    if config.getboolean('vis', 'models_MAE_comparison'):
+        mdl_pred = sep.join([config.get('vis', 'vis_path_folder'),
+                                     'performance_difference_comparison.png'])
+        d1= {'img_path': mdl_pred}
+        model_predection.update(d1)
+
     json_report["Modelling"] = {
-    'model_performance':model_performance,'model_predection':model_predection
+        'model_performance':model_performance,
+        'model_predection':model_predection,
+        'model_with_drift_detection_performance':model_with_drift_detection_performance,
+        'model_with_drift_detection_MAE':model_with_drift_detection_MAE,
+        'models_comparison':models_comparison,
+        'models_MAE_comparison':models_MAE_comparison
         # 'Train Validation Test': {
         #     'Train Validation Test Size': data_diagnostic_meta_info['train_val_test_split'],
         # }

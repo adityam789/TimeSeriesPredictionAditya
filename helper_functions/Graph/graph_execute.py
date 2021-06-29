@@ -9,13 +9,10 @@ plt.style.use('seaborn-white')
 config=cp.RawConfigParser()
 config.read('config/config.properties')
 
-with open(config.get('data_path', 'scaler_dump'), 'rb') as f:
- 	scaler=pickle.load(f)
-
 def Plot_graph_series(stream, prediction_vector, detections, n, alarms=None,  delays=None, false_alarms=None, execution_time=None, RMSError=None, hitRatio=None, name=None):
 
     # style of some graphics functions
-    detector_width = 2
+    detector_width = 1
     style = 'dashed'
     color_data_real = 'Blue'
     prediction_color = 'Red'
@@ -28,9 +25,6 @@ def Plot_graph_series(stream, prediction_vector, detections, n, alarms=None,  de
     X_axis = [0] * 2
     X_axis[0] = 0
     X_axis[1] = len(stream)
-    Y_axis_error = [0] * 2
-    Y_axis_error[0] = 0
-    Y_axis_error[1] = 0.2
     X_intervals = range(X_axis[0], X_axis[1], 900)
 
     label_detection_found = 'Drift Found'
@@ -77,20 +71,20 @@ def Plot_graph_series(stream, prediction_vector, detections, n, alarms=None,  de
     # plt.xticks(X_intervals, rotation=45)
 
     #saving graphic
-    if not os.path.exists(config.get('vis','vis_path_folder')):
-        os.makedirs( config.get('vis','vis_path_folder'))
-    plt.savefig(config.get('vis','vis_path_folder') + '/model_performance_CD.png')
+    if not os.path.exists(config.get('vis','vis_path_folder2')):
+        os.makedirs( config.get('vis','vis_path_folder2'))
+    plt.savefig(config.get('vis','vis_path_folder2') + '/model_performance_CD.png')
 
     #showing graphic
     plt.show()
 
+    plt.close()
+
 
 def plotGraphError(stream, detections, error_stream_vector, n, name):
 
-    print('hero')
-
     error_color = 'Blue'
-    detector_width = 2
+    detector_width = 1
     style = 'dashed'
     label_detection_found = 'Drift Found'
 
@@ -101,9 +95,6 @@ def plotGraphError(stream, detections, error_stream_vector, n, name):
     X_axis = [0] * 2
     X_axis[0] = 0
     X_axis[1] = len(stream)
-    Y_axis_error = [0] * 2
-    Y_axis_error[0] = 0
-    Y_axis_error[1] = 0.2
     X_intervals = range(X_axis[0], X_axis[1], 900)
 
     # Creating a figure
@@ -130,21 +121,21 @@ def plotGraphError(stream, detections, error_stream_vector, n, name):
                          alpha=alpha_retraining_color, zorder=10)
 
     # putting caption and defining the graphic axes
-    plt.ylabel('RMSError')
+    plt.ylabel('MAE')
     plt.xlabel('Time')
     grafico2.legend(loc='upper center', ncol=1, fancybox=True, shadow=True)
-    grafico2.axis([X_axis[0], X_axis[1], Y_axis_error[0], 0.06])
+    # grafico2.axis([X_axis[0], X_axis[1], Y_axis_error[0], 0.06])
     # plt.xticks(X_intervals, rotation=45)
+    
+    #saving graphic
+    if not os.path.exists(config.get('vis','vis_path_folder2')):
+        os.makedirs( config.get('vis','vis_path_folder2'))
+    plt.savefig(config.get('vis','vis_path_folder2') + '/MAE.png')
 
     #showing graphic
     plt.show()
-    
-    #saving graphic
-    if not os.path.exists(config.get('vis','vis_path_folder')):
-        os.makedirs( config.get('vis','vis_path_folder'))
-    plt.savefig(config.get('vis','vis_path_folder') + '/MAE.png')
 
-def plotGraphShobit(X_train, df1, train_predict, test_predict):
+def plotGraphShobit(X_train, df1, train_predict, test_predict, scaler):
     #shift train predictions for plotting
 	## Plotting 
     #vis of graphs
@@ -165,27 +156,52 @@ def plotGraphShobit(X_train, df1, train_predict, test_predict):
 	plt.plot(scaler.inverse_transform(df1),label='True')
 	plt.plot(trainPredictPlot,label='Train')
 	plt.plot(testPredictPlot,label='Test')		
-	if not os.path.exists(config.get('vis','vis_path_folder')):
-		os.makedirs( config.get('vis','vis_path_folder'))
-	plt.savefig(config.get('vis','vis_path_folder') + '/model_performance.png')
+	if not os.path.exists(config.get('vis','vis_path_folder2')):
+		os.makedirs( config.get('vis','vis_path_folder2'))
+	plt.savefig(config.get('vis','vis_path_folder2') + '/model_performance.png')
 
-def plot_difference(model1_predict, model2_predict):
-    size = model1_predict.size()
+def plot_difference(model1_predict, model2_predict, real):
+    size = model1_predict.size
     x_axis = np.arange(size)
-    plt.plot(x_axis, model1_predict, 'r-', label='without_drift')
-    plt.plot(x_axis, model2_predict, 'b-', label='with_drift')
+    plt.plot(x_axis, model1_predict, 'r-', label='without_drift', linewidth=0.5)
+    plt.plot(x_axis, model2_predict, 'b-', label='with_drift', linewidth=0.5)
+    plt.plot(x_axis, real, 'g-', label='Real Values', linewidth=0.5)
     plt.title("Model Comparison")
     # putting caption and defining the graphic axes
     plt.ylabel('Observations')
     plt.xlabel('Index')
     plt.legend()
-    #showing graphic
-    plt.show()
     
     #saving graphic
-    if not os.path.exists(config.get('vis','vis_path_folder')):
-        os.makedirs( config.get('vis','vis_path_folder'))
-    plt.savefig(config.get('vis','vis_path_folder') + '/performance_comparison.png')
+    if not os.path.exists(config.get('vis','vis_path_folder2')):
+        os.makedirs( config.get('vis','vis_path_folder2'))
+    plt.savefig(config.get('vis','vis_path_folder2') + '/performance_comparison.png')
+
+    #showing graphic
+    plt.show()
+
+    plt.close()
+
+def plot_difference_comparison(model1_predict_MAE, model2_predict_MAE):
+    size = len(model1_predict_MAE)
+    x_axis = np.arange(size)
+    plt.plot(x_axis, model1_predict_MAE, 'r-', label='without_drift', linewidth=0.5)
+    plt.plot(x_axis, model2_predict_MAE, 'b-', label='with_drift', linewidth=0.5)
+    plt.title("Model MAE Comparison")
+    # putting caption and defining the graphic axes
+    plt.ylabel('MAE')
+    plt.xlabel('Index')
+    plt.legend()
+    
+    #saving graphic
+    if not os.path.exists(config.get('vis','vis_path_folder2')):
+        os.makedirs( config.get('vis','vis_path_folder2'))
+    plt.savefig(config.get('vis','vis_path_folder2') + '/performance_difference_comparison.png')
+
+    #showing graphic
+    plt.show()
+
+    plt.close()
 
 def graphMovingAverage(df):
 	target_column = config.get('target_column', 'target_column')
@@ -210,6 +226,6 @@ def graphMovingAverage(df):
 	plt.ylabel('Close Price USD($)')
 	plt.legend(loc='upper left')
 
-	if not os.path.exists(config.get('vis', 'vis_path_folder')):
-		os.makedirs(config.get('vis', 'vis_path_folder'))
-	plt.savefig(config.get('vis', 'vis_path_folder') + '/mean_plot.png')
+	if not os.path.exists(config.get('vis', 'vis_path_folder1')):
+		os.makedirs(config.get('vis', 'vis_path_folder1'))
+	plt.savefig(config.get('vis', 'vis_path_folder1') + '/mean_plot.png')

@@ -54,6 +54,8 @@ def model_making():
 	test_predict=model.predict(X_test)
 
 	# Scores
+	RMSE2 = math.sqrt(mean_squared_error(y_train,train_predict))
+	print(RMSE2)
 	# print(math.sqrt(mean_squared_error(y_train,train_predict)),math.sqrt(mean_squared_error(ytest,test_predict)))
 	# print(math.sqrt(mean_squared_error(ytest,test_predict)))   
 	# print(mean_absolute_error(ytest,test_predict))
@@ -109,17 +111,27 @@ def model_making():
 
 	# Plot Shobit data:
 
-	plotGraphShobit(X_train, df1, train_predict, test_predict)
+	plotGraphShobit(X_train, df1, train_predict, test_predict, scaler)
   
 	#..........................
 
 	# Plot Aditya data:
 	error_stream = []
+	error_stream2 = []
+	y_train = scaler.inverse_transform(y_train.reshape(-1, 1)).flatten()
+	predict2 = scaler.inverse_transform(predict2)
 	for i in range(y_train.size):
+		error_stream2.append(abs(y_train[i] - train_predict[i][0]))
 		error_stream.append(abs(y_train[i] - predict2[i][0]))
 	Plot_graph_series(y_train, predict2, train_data_change_detected_ADWIN, 10, RMSError= RMSE, name="homer")
 	plotGraphError(y_train, train_data_change_detected_ADWIN, error_stream, 10, "homer")
 
+	#..........................
+
+	# Plot Comparison data:
+	plot_difference(train_predict, predict2, y_train)
+
+	plot_difference_comparison(error_stream2, error_stream)
 	#..........................
 
 	# demonstrate prediction for next 10 days
@@ -166,9 +178,9 @@ def model_making():
 	plt.plot(day_new,scaler.inverse_transform(df1[-100:]))
 	plt.plot(day_pred,scaler.inverse_transform(lst_output))
 
-	if not os.path.exists(config.get('vis','vis_path_folder')):
-		os.makedirs( config.get('vis','vis_path_folder'))
-	plt.savefig(config.get('vis','vis_path_folder') + '/model_predection.png')
+	if not os.path.exists(config.get('vis','vis_path_folder2')):
+		os.makedirs( config.get('vis','vis_path_folder2'))
+	plt.savefig(config.get('vis','vis_path_folder2') + '/model_predection.png')
 
 				
 

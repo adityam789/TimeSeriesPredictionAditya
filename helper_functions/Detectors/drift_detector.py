@@ -1,7 +1,7 @@
 from .ddm import DDM
 from .eddm import EDDM
 from .hddm_w import HDDM_W
-from skmultiflow.drift_detection.detector import ADWIN
+from skmultiflow.drift_detection.adwin import ADWIN
 adwin = ADWIN()
 
 class CustomClass:
