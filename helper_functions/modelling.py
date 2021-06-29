@@ -178,9 +178,9 @@ def model_making():
 	plt.plot(day_new,scaler.inverse_transform(df1[-100:]))
 	plt.plot(day_pred,scaler.inverse_transform(lst_output))
 
-	if not os.path.exists(config.get('vis','vis_path_folder')):
-		os.makedirs( config.get('vis','vis_path_folder'))
-	plt.savefig(config.get('vis','vis_path_folder') + '/model_predection.png')
+	if not os.path.exists(config.get('vis','vis_path_folder2')):
+		os.makedirs( config.get('vis','vis_path_folder2'))
+	plt.savefig(config.get('vis','vis_path_folder2') + '/model_predection.png')
 
 				
 

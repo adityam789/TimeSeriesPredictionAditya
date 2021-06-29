@@ -71,9 +71,9 @@ def Plot_graph_series(stream, prediction_vector, detections, n, alarms=None,  de
     # plt.xticks(X_intervals, rotation=45)
 
     #saving graphic
-    if not os.path.exists(config.get('vis','vis_path_folder')):
-        os.makedirs( config.get('vis','vis_path_folder'))
-    plt.savefig(config.get('vis','vis_path_folder') + '/model_performance_CD.png')
+    if not os.path.exists(config.get('vis','vis_path_folder2')):
+        os.makedirs( config.get('vis','vis_path_folder2'))
+    plt.savefig(config.get('vis','vis_path_folder2') + '/model_performance_CD.png')
 
     #showing graphic
     plt.show()
@@ -128,9 +128,9 @@ def plotGraphError(stream, detections, error_stream_vector, n, name):
     # plt.xticks(X_intervals, rotation=45)
     
     #saving graphic
-    if not os.path.exists(config.get('vis','vis_path_folder')):
-        os.makedirs( config.get('vis','vis_path_folder'))
-    plt.savefig(config.get('vis','vis_path_folder') + '/MAE.png')
+    if not os.path.exists(config.get('vis','vis_path_folder2')):
+        os.makedirs( config.get('vis','vis_path_folder2'))
+    plt.savefig(config.get('vis','vis_path_folder2') + '/MAE.png')
 
     #showing graphic
     plt.show()
@@ -156,9 +156,9 @@ def plotGraphShobit(X_train, df1, train_predict, test_predict, scaler):
 	plt.plot(scaler.inverse_transform(df1),label='True')
 	plt.plot(trainPredictPlot,label='Train')
 	plt.plot(testPredictPlot,label='Test')		
-	if not os.path.exists(config.get('vis','vis_path_folder')):
-		os.makedirs( config.get('vis','vis_path_folder'))
-	plt.savefig(config.get('vis','vis_path_folder') + '/model_performance.png')
+	if not os.path.exists(config.get('vis','vis_path_folder2')):
+		os.makedirs( config.get('vis','vis_path_folder2'))
+	plt.savefig(config.get('vis','vis_path_folder2') + '/model_performance.png')
 
 def plot_difference(model1_predict, model2_predict, real):
     size = model1_predict.size
@@ -173,9 +173,9 @@ def plot_difference(model1_predict, model2_predict, real):
     plt.legend()
     
     #saving graphic
-    if not os.path.exists(config.get('vis','vis_path_folder')):
-        os.makedirs( config.get('vis','vis_path_folder'))
-    plt.savefig(config.get('vis','vis_path_folder') + '/performance_comparison.png')
+    if not os.path.exists(config.get('vis','vis_path_folder2')):
+        os.makedirs( config.get('vis','vis_path_folder2'))
+    plt.savefig(config.get('vis','vis_path_folder2') + '/performance_comparison.png')
 
     #showing graphic
     plt.show()
@@ -194,9 +194,9 @@ def plot_difference_comparison(model1_predict_MAE, model2_predict_MAE):
     plt.legend()
     
     #saving graphic
-    if not os.path.exists(config.get('vis','vis_path_folder')):
-        os.makedirs( config.get('vis','vis_path_folder'))
-    plt.savefig(config.get('vis','vis_path_folder') + '/performance_difference_comparison.png')
+    if not os.path.exists(config.get('vis','vis_path_folder2')):
+        os.makedirs( config.get('vis','vis_path_folder2'))
+    plt.savefig(config.get('vis','vis_path_folder2') + '/performance_difference_comparison.png')
 
     #showing graphic
     plt.show()
@@ -226,6 +226,6 @@ def graphMovingAverage(df):
 	plt.ylabel('Close Price USD($)')
 	plt.legend(loc='upper left')
 
-	if not os.path.exists(config.get('vis', 'vis_path_folder')):
-		os.makedirs(config.get('vis', 'vis_path_folder'))
-	plt.savefig(config.get('vis', 'vis_path_folder') + '/mean_plot.png')
+	if not os.path.exists(config.get('vis', 'vis_path_folder1')):
+		os.makedirs(config.get('vis', 'vis_path_folder1'))
+	plt.savefig(config.get('vis', 'vis_path_folder1') + '/mean_plot.png')
