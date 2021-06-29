@@ -21,7 +21,7 @@ def preprocessing_stage():
     #     data_diagnostic_meta_info = pickle.load(f)
     mean_dist = {}
     if config.getboolean('vis', 'mean_plot'):
-        vis_path = sep.join([config.get('vis', 'vis_path_folder'),
+        vis_path = sep.join([config.get('vis', 'vis_path_folder1'),
                                      'mean_plot.png'])
         d1= {'img_path': vis_path}
         mean_dist.update(d1)
@@ -44,42 +44,42 @@ def modelling_stage():
     #     data_diagnostic_meta_info = pickle.load(f)
     model_performance = {}
     if config.getboolean('vis', 'model_performance'):
-        mdl_prm = sep.join([config.get('vis', 'vis_path_folder'),
+        mdl_prm = sep.join([config.get('vis', 'vis_path_folder2'),
                                      'model_performance.png'])
         d1= {'img_path': mdl_prm}
         model_performance.update(d1)
         
     model_predection = {}
     if config.getboolean('vis', 'model_predection'):
-        mdl_pred = sep.join([config.get('vis', 'vis_path_folder'),
+        mdl_pred = sep.join([config.get('vis', 'vis_path_folder2'),
                                      'model_predection.png'])
         d1= {'img_path': mdl_pred}
         model_predection.update(d1)
 
     model_with_drift_detection_performance = {}
     if config.getboolean('vis', 'model_with_drift_detection_performance'):
-        mdl_pred = sep.join([config.get('vis', 'vis_path_folder'),
+        mdl_pred = sep.join([config.get('vis', 'vis_path_folder2'),
                                      'model_performance_CD.png'])
         d1= {'img_path': mdl_pred}
         model_predection.update(d1)
 
     model_with_drift_detection_MAE = {}
     if config.getboolean('vis', 'model_with_drift_detection_MAE'):
-        mdl_pred = sep.join([config.get('vis', 'vis_path_folder'),
+        mdl_pred = sep.join([config.get('vis', 'vis_path_folder2'),
                                      'MAE.png'])
         d1= {'img_path': mdl_pred}
         model_predection.update(d1)
 
     models_comparison = {}
     if config.getboolean('vis', 'models_comparison'):
-        mdl_pred = sep.join([config.get('vis', 'vis_path_folder'),
+        mdl_pred = sep.join([config.get('vis', 'vis_path_folder2'),
                                      'performance_comparison.png'])
         d1= {'img_path': mdl_pred}
         model_predection.update(d1)
 
     models_MAE_comparison = {}
     if config.getboolean('vis', 'models_MAE_comparison'):
-        mdl_pred = sep.join([config.get('vis', 'vis_path_folder'),
+        mdl_pred = sep.join([config.get('vis', 'vis_path_folder2'),
                                      'performance_difference_comparison.png'])
         d1= {'img_path': mdl_pred}
         model_predection.update(d1)
