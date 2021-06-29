@@ -1,1 +1,1 @@
-# TimeSeiresPredection
+# TimeSeriesPrediction
