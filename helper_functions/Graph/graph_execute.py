@@ -182,6 +182,27 @@ def plot_difference(model1_predict, model2_predict, real):
 
     plt.close()
 
+def plot_difference_comparison(model1_predict_MAE, model2_predict_MAE):
+    size = len(model1_predict_MAE)
+    x_axis = np.arange(size)
+    plt.plot(x_axis, model1_predict_MAE, 'r-', label='without_drift', linewidth=0.5)
+    plt.plot(x_axis, model2_predict_MAE, 'b-', label='with_drift', linewidth=0.5)
+    plt.title("Model MAE Comparison")
+    # putting caption and defining the graphic axes
+    plt.ylabel('MAE')
+    plt.xlabel('Index')
+    plt.legend()
+    
+    #saving graphic
+    if not os.path.exists(config.get('vis','vis_path_folder')):
+        os.makedirs( config.get('vis','vis_path_folder'))
+    plt.savefig(config.get('vis','vis_path_folder') + '/performance_difference_comparison.png')
+
+    #showing graphic
+    plt.show()
+
+    plt.close()
+
 def graphMovingAverage(df):
 	target_column = config.get('target_column', 'target_column')
 	df_10 = pd.DataFrame()
