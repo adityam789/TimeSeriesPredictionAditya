@@ -7,7 +7,10 @@ import pandas as pd
 config=cp.RawConfigParser()
 config.read('config/config.properties')
 
-    
+dirname = config.get('json_result','json_result_path_folder')
+if not os.path.exists(dirname):
+	os.makedirs(dirname)
+
 json_report = dict()
 sep = '/'
 
