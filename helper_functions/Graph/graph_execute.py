@@ -12,7 +12,7 @@ config.read('config/config.properties')
 def Plot_graph_series(stream, prediction_vector, detections, n, alarms=None,  delays=None, false_alarms=None, execution_time=None, RMSError=None, hitRatio=None, name=None):
 
     # style of some graphics functions
-    detector_width = 2
+    detector_width = 1
     style = 'dashed'
     color_data_real = 'Blue'
     prediction_color = 'Red'
@@ -83,10 +83,8 @@ def Plot_graph_series(stream, prediction_vector, detections, n, alarms=None,  de
 
 def plotGraphError(stream, detections, error_stream_vector, n, name):
 
-    print('hero')
-
     error_color = 'Blue'
-    detector_width = 2
+    detector_width = 1
     style = 'dashed'
     label_detection_found = 'Drift Found'
 
@@ -123,7 +121,7 @@ def plotGraphError(stream, detections, error_stream_vector, n, name):
                          alpha=alpha_retraining_color, zorder=10)
 
     # putting caption and defining the graphic axes
-    plt.ylabel('RMSError')
+    plt.ylabel('MAE')
     plt.xlabel('Time')
     grafico2.legend(loc='upper center', ncol=1, fancybox=True, shadow=True)
     # grafico2.axis([X_axis[0], X_axis[1], Y_axis_error[0], 0.06])
