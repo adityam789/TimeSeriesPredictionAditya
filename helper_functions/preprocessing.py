@@ -10,6 +10,7 @@ import pickle
 import matplotlib.pyplot as plt
 from .Detectors.drift_detector import *
 from .Graph.graph_execute import *
+
 plt.style.use('fivethirtyeight')
 
 
