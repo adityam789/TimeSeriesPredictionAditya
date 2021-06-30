@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.preprocessing import MinMaxScaler 
 import tensorflow as tf
+import shap
 import math
 import pandas as pd
 import configparser as cp
@@ -106,6 +107,16 @@ def model_making():
 
 	model_name = config.get('models_path','model_name')
 	model.save(models_path_folder+ model_name)
+
+	#..........................
+
+	# explainer = shap.DeepExplainer(model, X_train)
+	# # explain the the testing instances (can use fewer instanaces)
+	# # explaining each prediction requires 2 * background dataset size runs
+	# shap_values = explainer.shap_values(X_test)
+	# # init the JS visualization code
+	# shap.initjs()
+	# shap.force_plot(explainer.expected_value[0], shap_values[0][0])
 
 	#..........................
 

@@ -61,28 +61,28 @@ def modelling_stage():
         mdl_pred = sep.join([config.get('vis', 'vis_path_folder2'),
                                      'model_performance_CD.png'])
         d1= {'img_path': mdl_pred}
-        model_predection.update(d1)
+        model_with_drift_detection_performance.update(d1)
 
     model_with_drift_detection_MAE = {}
     if config.getboolean('vis', 'model_with_drift_detection_MAE'):
         mdl_pred = sep.join([config.get('vis', 'vis_path_folder2'),
                                      'MAE.png'])
         d1= {'img_path': mdl_pred}
-        model_predection.update(d1)
+        model_with_drift_detection_MAE.update(d1)
 
     models_comparison = {}
     if config.getboolean('vis', 'models_comparison'):
         mdl_pred = sep.join([config.get('vis', 'vis_path_folder2'),
                                      'performance_comparison.png'])
         d1= {'img_path': mdl_pred}
-        model_predection.update(d1)
+        models_comparison.update(d1)
 
     models_MAE_comparison = {}
     if config.getboolean('vis', 'models_MAE_comparison'):
         mdl_pred = sep.join([config.get('vis', 'vis_path_folder2'),
                                      'performance_difference_comparison.png'])
         d1= {'img_path': mdl_pred}
-        model_predection.update(d1)
+        models_MAE_comparison.update(d1)
 
     json_report["Modelling"] = {
         'model_performance':model_performance,
