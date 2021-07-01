@@ -134,8 +134,8 @@ def model_making():
 	for i in range(y_train.size):
 		error_stream2.append(abs(y_train[i] - train_predict[i][0]))
 		error_stream.append(abs(y_train[i] - predict2[i][0]))
-	Plot_graph_series(y_train, predict2, train_data_change_detected_ADWIN, 10, RMSError= RMSE, name="homer")
-	plotGraphError(y_train, train_data_change_detected_ADWIN, error_stream, 10, "homer")
+	Plot_graph_series(y_train, predict2, train_data_change_detected_ADWIN, 10, RMSError= RMSE, name=config.get('graph_labels','data_title'))
+	plotGraphError(y_train, train_data_change_detected_ADWIN, error_stream, 10, config.get('graph_labels','data_title'))
 
 	#..........................
 
@@ -152,6 +152,7 @@ def model_making():
 	temp_input=list(x_input)
 	temp_input=temp_input[0].tolist()
 	lst_output=[]
+	desc = "This is a graph illustrating the future prediction of model. \n The plot showcases the data of past" + n_steps + "indexes (days) and predicts the future values for the next 10 indexes (days). \n The x-axis represents the indexes of the data and the y-axis represents the data name/ type."
 	# n_steps=100
 	i=0
 	while(i<prediction_next_days):
@@ -182,9 +183,12 @@ def model_making():
 	day_new=np.arange(1,101)
 	day_pred=np.arange(101,101+prediction_next_days)
 	plt.figure(figsize=(8,4))
-	plt.title('Model')
-	plt.xlabel('Date', fontsize=18)
-	plt.ylabel('Close Price USD ($)', fontsize=18)
+	plt.suptitle(config.get('graph_labels','data_title'))
+	plt.title('Future Prediction')
+	plt.xlabel('Index', fontsize=18)
+	plt.ylabel(config.get('graph_labels','data_type'), fontsize=18)
+	# plt.figtext(0.5, 0.01, "one text and next text", ha="center", fontsize=18, bbox={"facecolor":"orange", "alpha":0.5, "pad":5})
+	plt.annotate(desc, (0,0), (0, -20), xycoords='axes fraction', textcoords='offset points', va='top')
 	plt.legend(['True', 'pred'],loc='upper left')
 	plt.plot(day_new,scaler.inverse_transform(df1[-100:]))
 	plt.plot(day_pred,scaler.inverse_transform(lst_output))
