@@ -47,7 +47,7 @@ def model_making():
 	model.add(LSTM(50, return_sequences=False))
 	model.add(Dense(25))
 	model.add(Dense(1))
-	model.compile(optimizer='adam', loss='mean_squared_error')
+	model.compile(optimizer='adam', loss='mean_squared_error', metrics=['accuracy', 'binary_crossentropy'])
 	print( model.summary())
 
 	model.fit(X_train,y_train,validation_data=(X_test,ytest),epochs=config.getint('model_params','epochs'),batch_size=config.getint('model_params','batch_size'),verbose=1)
@@ -72,8 +72,8 @@ def model_making():
 	model2.add(LSTM(50, return_sequences=False))
 	model2.add(Dense(25))
 	model2.add(Dense(1))
-	model2.compile(optimizer='adam', loss='mean_squared_error')
-	print( model2.summary())
+	model2.compile(optimizer='adam', loss='mean_squared_error', metrics=['accuracy', 'binary_crossentropy'])
+	print( model2.summary())	
 
 	predict1 = np.array([[1]])
 	predict2 = np.array([[1]])
@@ -88,7 +88,7 @@ def model_making():
 		for l in range(len(w)):
 			w[l] = w[l] - (w[l]*0.001*a_score) #0.001=learning rate
 		model2.layers[0].set_weights(w)
-		model2.fit(X_batch, up_y, epochs=10, verbose=1)
+		model2.fit(X_batch, up_y, epochs=config.getint('model_params','epochs'), verbose=1)
 		pred2 = model2.predict_on_batch(X_batch)
 		predict2 = np.concatenate((predict2, pred2), axis=0)
 		model2.reset_states()
@@ -152,10 +152,10 @@ def model_making():
 	temp_input=list(x_input)
 	temp_input=temp_input[0].tolist()
 	lst_output=[]
-	desc = "This is a graph illustrating the future prediction of model. \n The plot showcases the data of past" + n_steps + "indexes (days) and predicts the future values for the next 10 indexes (days). \n The x-axis represents the indexes of the data and the y-axis represents the data name/ type."
+	# desc = "This is a graph illustrating the future prediction of model.\nThe plot showcases the data of past " + str(n_steps - 1) + " indexes (days) and predicts the future values for the next 10 indexes (days).\nThe x-axis represents the indexes of the data and the y-axis represents the data name/ type."
 	# n_steps=100
 	i=0
-	while(i<prediction_next_days):
+	while(i<prediction_next_days): 
 	    
 	    if(len(temp_input)>n_steps):
 	        #print(temp_input)
@@ -182,13 +182,14 @@ def model_making():
 	lst_output=np.array(lst_output)
 	day_new=np.arange(1,101)
 	day_pred=np.arange(101,101+prediction_next_days)
-	plt.figure(figsize=(8,4))
+	fig = plt.figure(figsize=(12,6))
+	fig.subplots_adjust(bottom=0.1)
 	plt.suptitle(config.get('graph_labels','data_title'))
 	plt.title('Future Prediction')
 	plt.xlabel('Index', fontsize=18)
 	plt.ylabel(config.get('graph_labels','data_type'), fontsize=18)
 	# plt.figtext(0.5, 0.01, "one text and next text", ha="center", fontsize=18, bbox={"facecolor":"orange", "alpha":0.5, "pad":5})
-	plt.annotate(desc, (0,0), (0, -20), xycoords='axes fraction', textcoords='offset points', va='top')
+	# plt.annotate(desc, (0,0), (-60, -40), xycoords='axes fraction', textcoords='offset points', va='top')
 	plt.legend(['True', 'pred'],loc='upper left')
 	plt.plot(day_new,scaler.inverse_transform(df1[-100:]))
 	plt.plot(day_pred,scaler.inverse_transform(lst_output))
