@@ -2,6 +2,7 @@ import configparser as cp
 import pickle
 import numpy as np
 import matplotlib.pyplot as plt
+import os
 
 from tensorflow.keras.models import load_model
 model = load_model('Results\model_paths\stock_lstm_model.h5')
@@ -44,5 +45,10 @@ def get_avg(x, y, c = None):
 imp = feature_importance(X_test.copy(), y_test, get_avg, repeat=1)
 
 plt.plot(imp)
+
+#saving graphic
+if not os.path.exists(config.get('vis','vis_path_folder3')):
+    os.makedirs( config.get('vis','vis_path_folder3'))
+plt.savefig(config.get('vis','vis_path_folder3') + '/xai_explain.png')
 
 plt.show()
