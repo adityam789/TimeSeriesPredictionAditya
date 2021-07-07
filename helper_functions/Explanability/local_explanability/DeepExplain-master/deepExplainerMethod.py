@@ -39,7 +39,7 @@ with DeepExplain(session=K.get_session()) as de:
     #attributions_elrp  = de.explain('elrp', target_tensor, input_tensor, xs, ys=ys)
     #attributions_occ   = de.explain('occlusion', target_tensor, input_tensor, xs, ys=ys)
     
-    # Compare Gradient * Input with approximate Shapley Values
+    # Compare IntGradient with approximate Shapley Values
     # Note1: Shapley Value sampling with 100 samples per feature (78400 runs) takes a couple of minutes on a GPU.
     # Note2: 100 samples are not enough for convergence, the result might be affected by sampling variance
     attributions_sv     = de.explain('shapley_sampling', target_tensor, input_tensor, xs, samples=100)
@@ -47,7 +47,7 @@ with DeepExplain(session=K.get_session()) as de:
 print(type(attributions_ig))
 print(type(attributions_sv))
 
-with open(config.get('data_path', 'shapValues'), 'wb') as f:
+with open(config.get('data_path', 'shapValues'), 'wb')  as f:
 	pickle.dump(attributions_ig, f)	
 with open(config.get('data_path', 'gradValues'), 'wb') as f:
 	pickle.dump(attributions_sv, f)	

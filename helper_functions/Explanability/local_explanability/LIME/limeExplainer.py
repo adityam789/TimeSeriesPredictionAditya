@@ -2,6 +2,7 @@ from lime import lime_tabular
 import configparser as cp
 import pickle
 import matplotlib.pyplot as plt
+import os
 
 from keras.models import load_model
 model = load_model('Results\model_paths\stock_lstm_model.h5')
@@ -32,4 +33,10 @@ exp = explainer.explain_instance(
     num_features = 100)
 
 fig = exp.as_pyplot_figure()    
+
+#saving graphic
+if not os.path.exists(config.get('vis','vis_path_folder3')):
+    os.makedirs( config.get('vis','vis_path_folder3'))
+plt.savefig(config.get('vis','vis_path_folder3') + '/lime_explain.png')
+
 plt.show()
