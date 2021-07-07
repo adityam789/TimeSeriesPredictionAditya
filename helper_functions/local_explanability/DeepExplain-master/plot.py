@@ -14,9 +14,14 @@ with open(config.get('data_path', 'gradValues'), 'rb') as f:
 print(attributions_ig.shape)
 print(attributions_sv.shape)
 
-plt.plot(attributions_ig[0],'r')
+fig = plt.figure(figsize=(10,5))
+graph = fig.add_subplot()
+graph.plot(attributions_ig[0],'r')
 # plt.plot(attributions_ig[2],'b')
-plt.plot(attributions_sv[0],'y')
+graph.plot(attributions_sv[0],'y')
+plt.title('Deep explainer')
+plt.xlabel('Days or Features of input')
+plt.ylabel('Attributions')
 
 #saving graphic
 if not os.path.exists(config.get('vis','vis_path_folder3')):

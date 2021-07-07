@@ -27,9 +27,6 @@ def feature_importance(x, y, func, repeat=10, plot=True):
             score = func(t, y, c)
             imp[c] += base_score - score
     imp = [a/repeat for a in imp]
-    # imp_df = pd.DataFrame(data=[imp], columns=x.columns)
-    # if plot:
-    #     imp_df.sum().sort_values().plot.barh()
     return imp
 
 def get_avg(x, y, c = None):
@@ -44,7 +41,12 @@ def get_avg(x, y, c = None):
 
 imp = feature_importance(X_test.copy(), y_test, get_avg, repeat=1)
 
-plt.plot(imp)
+fig = plt.figure(figsize=(10,5))
+graph = fig.add_subplot()
+graph.plot(imp)
+plt.title('xAI Explaination')
+plt.xlabel('Days or Features of input')
+plt.ylabel('Relative Loss (Base score - new score)')
 
 #saving graphic
 if not os.path.exists(config.get('vis','vis_path_folder3')):
