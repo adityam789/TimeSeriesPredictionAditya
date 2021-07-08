@@ -1,0 +1,52 @@
+{
+  "Data Diagnostic": {
+    "mean_dist": {
+      "img_path": "data_paths/mean_plot.png",
+      "one_liner": "This is a graph for visualizing the movement of the dataset.\nIt uses a simple fundamental math concept of moving average of size 10 and 20 to show the general trend of data.\nThe x-axis represents the indexes of the data and the y-axis represents the data name."
+    }
+  },
+  "Modelling": {
+    "model_performance": {
+      "img_path": "model_paths/model_performance.png",
+      "one_liner": "This is graph illustrating the trend of the dataset and the forecast/ prediction of the model without detection of drifts. The model utilizes\ntraining and test data (split part of dataset). The red line is the forecast of training data and yellow line is the forecast of test data.\nThis is to give an overview of the dataset and model. The x-axis and y-axis represents the indexes of data and the data name/type"
+    },
+    "model_predection": {
+      "img_path": "model_paths/model_predection.png",
+      "one_liner": "This is a graph illustrating the future prediction of model.\nThe plot showcases the data of past 100 indexes (days) and predicts the future values for the next 10 indexes (days).\nThe x-axis represents the indexes of the data and the y-axis represents the data name/ type."
+    },
+    "model_with_drift_detection_performance": {
+      "img_path": "model_paths/model_performance_CD.png",
+      "one_liner": "This is a plot showcasing the trends of the dataset and the forecast/ prediction of the model utilizing detection of drifts.\nThe dashed lines represent the indexes of the dataset where drift was found. This is to give an overview of the dataset and model.\nThe x-axis represents the indexes of data in the input and the y-axis represents the name of the dataset"
+    },
+    "model_with_drift_detection_MAE": {
+      "img_path": "model_paths/MAE.png",
+      "one_liner": "This is a graph displaying the forecasting error of the concept drift aware model. The forecasting error is the absolute error(AE)\nbetween the prediction/ forecast of the model and the real value(Data). The dashed lines are for the indexes at which drift was\ndetected. The x-axis and y-axis represents the indexes of the dataset and the absolute error/difference"
+    },
+    "models_comparison": {
+      "img_path": "model_paths/performance_comparison.png",
+      "one_liner": "This is a graph ploting the results/ forecast of both the models and the dataset.\nThis is to provide a bigger picture of the models performance/ forecast and the real data.\nThe x-axis represents the indexes of the data and the y-axis represents the data name."
+    },
+    "models_MAE_comparison": {
+      "img_path": "model_paths/performance_difference_comparison.png",
+      "one_liner": "This is plot showing the forecasting error of both the models (one with concept drift aware system and one without).\nThis is to compare the performance/ accuracy of the models. The forecasting error is the absolute difference between the model\nprediction and real data. The x-axis represents the indexes of the data and the y-axis represents the AE (Absolute error)"
+    }
+  },
+  "local_explainabilty": {
+    "deep_explain": {
+      "img_path": "local_exp_paths/deep_explain.png",
+      "one_liner": "This shows attribution of every feature (Days in the time step) towards the target. It shows both the attribution by Integrated Gradients and Shapley Value sampling for a particular instance in the test dataset. Attribution is a real value R(x_i) for each input feature, with respect to a target neuron of interest. Positive value of feature shows that it contribute positively to the activation of the target output and vice-versa"
+    },
+    "lime_explain": {
+      "img_path": "local_exp_paths/lime_explain.png",
+      "one_liner": "This shows the local explanation of a particular instance in the training set. The graph shows the explanation of all 100 features for an instance. A local explanation is a local linear approximation of the model's behaviour around the vicinity of a particular instance."
+    },
+    "lime_explain_minmax": {
+      "img_path": "local_exp_paths/lime_explain_minmax.png",
+      "one_liner": "This shows the 10 highest weighted features/ days and 10 least weighted features of a particular instance while generating its local explanability. A local explanation is a local linear approximation of the model's behaviour around the vicinity of a particular instance."
+    },
+    "xai_explain": {
+      "img_path": "local_exp_paths/xai_explain.png",
+      "one_liner": "This is a plot showing the importance of each feature/ day in the time step by showing the loss created upon randomly shuffling any one feature/day. More the negative loss, More important the feature is. It uses the test dataset to create loss evaluations."
+    }
+  }
+}

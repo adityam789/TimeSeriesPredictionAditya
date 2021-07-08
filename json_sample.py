@@ -1,9 +1,7 @@
 import json
 import os
-import pickle
 import configparser as cp
-import numpy as np
-import pandas as pd
+
 config=cp.RawConfigParser()
 config.read('config/config.properties')
 
@@ -15,15 +13,17 @@ json_report = dict()
 sep = '/'
 
 def preprocessing_stage():
-    # loading all meta info
-    # with open(sep.join([config.get('save_path', 'meta_data_save_path'),
-    #                     'meta_info_data_diagnostic.pkl']), 'rb') as f:
-    #     data_diagnostic_meta_info = pickle.load(f)
+
+    mean_dist_words = "This is a graph for visualizing the movement of the dataset.\nIt uses a simple fundamental math concept of moving average of size 10 and 20 to show the general trend of data.\nThe x-axis represents the indexes of the data and the y-axis represents the data name."
+
     mean_dist = {}
     if config.getboolean('vis', 'mean_plot'):
         vis_path = sep.join([config.get('vis', 'vis_path_folder1'),
                                      'mean_plot.png'])
-        d1= {'img_path': vis_path[10:]}
+        d1= {
+            'img_path': vis_path[10:],
+            'one_liner': mean_dist_words
+        }
         mean_dist.update(d1)
    
 
@@ -38,50 +38,74 @@ def preprocessing_stage():
 
 
 def modelling_stage():
-    # loading all meta info
-    # with open(sep.join([config.get('save_path', 'meta_data_save_path'),
-    #                     'meta_info_data_diagnostic.pkl']), 'rb') as f:
-    #     data_diagnostic_meta_info = pickle.load(f)
+
+    n_steps = config.getint('features','time_step')+1
+
+    model_performance_words = "This is graph illustrating the trend of the dataset and the forecast/ prediction of the model without detection of drifts. The model utilizes\ntraining and test data (split part of dataset). The red line is the forecast of training data and yellow line is the forecast of test data.\nThis is to give an overview of the dataset and model. The x-axis and y-axis represents the indexes of data and the data name/type"
+    model_predection_words = "This is a graph illustrating the future prediction of model.\nThe plot showcases the data of past " + str(n_steps - 1) + " indexes (days) and predicts the future values for the next 10 indexes (days).\nThe x-axis represents the indexes of the data and the y-axis represents the data name/ type."
+    model_with_drift_detection_MAE_words = "This is a graph displaying the forecasting error of the concept drift aware model. The forecasting error is the absolute error(AE)\nbetween the prediction/ forecast of the model and the real value(Data). The dashed lines are for the indexes at which drift was\ndetected. The x-axis and y-axis represents the indexes of the dataset and the absolute error/difference"
+    model_with_drift_detection_performance_words = "This is a plot showcasing the trends of the dataset and the forecast/ prediction of the model utilizing detection of drifts.\nThe dashed lines represent the indexes of the dataset where drift was found. This is to give an overview of the dataset and model.\nThe x-axis represents the indexes of data in the input and the y-axis represents the name of the dataset"
+    models_comparison_words = "This is a graph ploting the results/ forecast of both the models and the dataset.\nThis is to provide a bigger picture of the models performance/ forecast and the real data.\nThe x-axis represents the indexes of the data and the y-axis represents the data name."
+    models_MAE_comparison_words = "This is plot showing the forecasting error of both the models (one with concept drift aware system and one without).\nThis is to compare the performance/ accuracy of the models. The forecasting error is the absolute difference between the model\nprediction and real data. The x-axis represents the indexes of the data and the y-axis represents the AE (Absolute error)"
+
     model_performance = {}
     if config.getboolean('vis', 'model_performance'):
         mdl_prm = sep.join([config.get('vis', 'vis_path_folder2'),
                                      'model_performance.png'])
-        d1= {'img_path': mdl_prm[10:]}
+        d1= {
+            'img_path': mdl_prm[10:],
+            'one_liner': model_performance_words
+        }
         model_performance.update(d1)
         
     model_predection = {}
     if config.getboolean('vis', 'model_predection'):
         mdl_pred = sep.join([config.get('vis', 'vis_path_folder2'),
                                      'model_predection.png'])
-        d1= {'img_path': mdl_pred[10:]}
+        d1= {
+            'img_path': mdl_pred[10:],
+            'one_liner': model_predection_words
+        }
         model_predection.update(d1)
 
     model_with_drift_detection_performance = {}
     if config.getboolean('vis', 'model_with_drift_detection_performance'):
         mdl_pred = sep.join([config.get('vis', 'vis_path_folder2'),
                                      'model_performance_CD.png'])
-        d1= {'img_path': mdl_pred[10:]}
+        d1= {
+            'img_path': mdl_pred[10:],
+            'one_liner': model_with_drift_detection_performance_words
+        }
         model_with_drift_detection_performance.update(d1)
 
     model_with_drift_detection_MAE = {}
     if config.getboolean('vis', 'model_with_drift_detection_MAE'):
         mdl_pred = sep.join([config.get('vis', 'vis_path_folder2'),
                                      'MAE.png'])
-        d1= {'img_path': mdl_pred[10:]}
+        d1= {
+            'img_path': mdl_pred[10:],
+            'one_liner': model_with_drift_detection_MAE_words
+        }
         model_with_drift_detection_MAE.update(d1)
 
     models_comparison = {}
     if config.getboolean('vis', 'models_comparison'):
         mdl_pred = sep.join([config.get('vis', 'vis_path_folder2'),
                                      'performance_comparison.png'])
-        d1= {'img_path': mdl_pred[10:]}
+        d1= {
+            'img_path': mdl_pred[10:],
+            'one_liner': models_comparison_words
+        }
         models_comparison.update(d1)
 
     models_MAE_comparison = {}
     if config.getboolean('vis', 'models_MAE_comparison'):
         mdl_pred = sep.join([config.get('vis', 'vis_path_folder2'),
                                      'performance_difference_comparison.png'])
-        d1= {'img_path': mdl_pred[10:]}
+        d1= {
+            'img_path': mdl_pred[10:],
+            'one_liner': models_MAE_comparison_words
+        }
         models_MAE_comparison.update(d1)
 
     json_report["Modelling"] = {
@@ -98,12 +122,78 @@ def modelling_stage():
 
     return None
 
+def local_explainabilty_stage():
+
+    deep_explain_words = "This shows attribution of every feature (Days in the time step) towards the target. It shows both the attribution by Integrated Gradients and Shapley Value sampling for a particular instance in the test dataset. Attribution is a real value R(x_i) for each input feature, with respect to a target neuron of interest. Positive value of feature shows that it contribute positively to the activation of the target output and vice-versa"
+    source_citation = ["https://github.com/marcoancona/DeepExplain", "arxiv.org/abs/1711.06104"]
+    about = "A unified framework of perturbation and gradient-based attribution methods for Deep Neural Networks interpretability. DeepExplain also includes support for Shapley Values sampling. (ICLR 2018)"
+    lime_explain_words = "This shows the local explanation of a particular instance in the training set. The graph shows the explanation of all 100 features for an instance. A local explanation is a local linear approximation of the model's behaviour around the vicinity of a particular instance."
+    lime_explain_minmax_words = "This shows the 10 highest weighted features/ days and 10 least weighted features of a particular instance while generating its local explanability. A local explanation is a local linear approximation of the model's behaviour around the vicinity of a particular instance."
+    source_citation = ["https://arxiv.org/abs/1602.04938", "https://github.com/marcotcr/lime", "https://stackoverflow.com/questions/61511874/how-can-i-use-lime-to-classify-my-time-series"]
+    about = "Lime: Explaining the predictions of any machine learning classifier"
+    xai_explain_words = "This is a plot showing the importance of each feature/ day in the time step by showing the loss created upon randomly shuffling any one feature/day. More the negative loss, More important the feature is. It uses the test dataset to create loss evaluations."
+    source_citation = ["https://github.com/EthicalML/xai", "https://ethical.institute/principles.html#commitment-3", "https://ethicalml.github.io/xai/index.html"]
+    videos = ["https://www.youtube.com/watch?v=vq8mDiDODhc", "https://www.youtube.com/watch?v=GZpfBhQJ0H4"]
+    about = "XAI - An eXplainability toolbox for machine learning"
+
+    deep_explain = {}
+    if config.getboolean('vis', 'deep_explain'):
+        mdl_prm = sep.join([config.get('vis', 'vis_path_folder3'),
+                                     'deep_explain.png'])
+        d1= {
+            'img_path': mdl_prm[10:],
+            'one_liner': deep_explain_words
+        }
+        deep_explain.update(d1)
+        
+    lime_explain = {}
+    if config.getboolean('vis', 'lime_explain'):
+        mdl_pred = sep.join([config.get('vis', 'vis_path_folder3'),
+                                     'lime_explain.png'])
+        d1= {
+            'img_path': mdl_pred[10:],
+            'one_liner': lime_explain_words
+        }
+        lime_explain.update(d1)
+
+    lime_explain_minmax = {}
+    if config.getboolean('vis', 'lime_explain_minmax'):
+        mdl_pred = sep.join([config.get('vis', 'vis_path_folder3'),
+                                     'lime_explain_minmax.png'])
+        d1= {
+            'img_path': mdl_pred[10:],
+            'one_liner': lime_explain_minmax_words
+        }
+        lime_explain_minmax.update(d1)
+
+    xai_explain = {}
+    if config.getboolean('vis', 'xai_explain'):
+        mdl_pred = sep.join([config.get('vis', 'vis_path_folder3'),
+                                     'xai_explain.png'])
+        d1= {
+            'img_path': mdl_pred[10:],
+            'one_liner': xai_explain_words
+        }
+        xai_explain.update(d1)
+
+    json_report["local_explainabilty"] = {
+        'deep_explain':deep_explain,
+        'lime_explain':lime_explain,
+        'lime_explain_minmax':lime_explain_minmax,
+        'xai_explain':xai_explain,
+        # 'Train Validation Test': {
+        #     'Train Validation Test Size': data_diagnostic_meta_info['train_val_test_split'],
+        # }
+    }
+
+    return None
 
 def json_dump_generation():
     # Storing meta data into dict
     #if parser.getboolean('loading_data_diagnostic', 'set_execution'):
     preprocessing_stage()
     modelling_stage()
+    local_explainabilty_stage()
     # dumping the JSON file
     print('json_report', json_report)
     path = os.getcwd() + '/Results'
