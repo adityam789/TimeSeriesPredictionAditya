@@ -2,7 +2,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.preprocessing import MinMaxScaler 
 import tensorflow as tf
-import shap
 import math
 import pandas as pd
 import configparser as cp
@@ -126,14 +125,31 @@ def model_making():
   
 	#..........................
 
+	def keyOfTuple(t):
+		return t[0]
+
 	# Plot Aditya data:
 	error_stream = []
 	error_stream2 = []
+	error_stream_with_indexes = []
+	error_stream2_with_indexes = []
 	y_train = scaler.inverse_transform(y_train.reshape(-1, 1)).flatten()
 	predict2 = scaler.inverse_transform(predict2)
 	for i in range(y_train.size):
 		error_stream2.append(abs(y_train[i] - train_predict[i][0]))
 		error_stream.append(abs(y_train[i] - predict2[i][0]))
+		error_stream_with_indexes.append((abs(y_train[i] - predict2[i][0]),i))
+		error_stream2_with_indexes.append((abs(y_train[i] - train_predict[i][0]),i))
+
+	sorted_Errors = sorted(error_stream2_with_indexes, key=keyOfTuple)
+	maxVs = sorted_Errors[-5:]
+	minVs = sorted_Errors[:5]
+
+	with open(config.get('data_path', 'min10errors'), 'wb') as f:
+		pickle.dump(maxVs, f)	
+	with open(config.get('data_path', 'max10errors'), 'wb') as f:
+		pickle.dump(minVs, f)	
+
 	Plot_graph_series(y_train, predict2, train_data_change_detected_ADWIN, 10, RMSError= RMSE, name=config.get('graph_labels','data_title'))
 	plotGraphError(y_train, train_data_change_detected_ADWIN, error_stream, 10, config.get('graph_labels','data_title'))
 

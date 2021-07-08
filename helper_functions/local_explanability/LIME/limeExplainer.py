@@ -7,90 +7,114 @@ import os
 
 from keras.models import load_model
 import numpy as np
-model = load_model('Results\model_paths\stock_lstm_model.h5')
 
-config=cp.RawConfigParser()
-config.read('config/config.properties')
+def instance_plotter(index, explainer, X_train, model, path):
 
-with open(config.get('data_path', 'train_x'), 'rb') as f:
-	X_train = pickle.load(f)
-with open(config.get('data_path', 'test_x'), 'rb') as f:
- 	y_train =pickle.load(f)
+    config=cp.RawConfigParser()
+    config.read('config/config.properties')
 
-print(X_train.shape)
-print(y_train.shape)
+    exp = explainer.explain_instance(
+        data_row = X_train[index].reshape(1,100,1),
+        classifier_fn = model.predict,
+        num_features = 100)
 
-explainer = lime_tabular.RecurrentTabularExplainer(
-    X_train,
-    mode="regression",
-    training_labels = y_train,
-    feature_names = ['1']) # ,'2','3','4','5','6','7','8','9','10','11','12'],
-    # discretize_continuous = False
-    # # class_names = ['a','b','c','d','e','f','g','h','i'],
-    # discretizer = 'decile')
+    weights = exp.as_list()
+    minV, maxV = [], []
+    t = [i[1] for i in weights]
+    n = np.array(t)
+    n_copy = n.copy()
 
-exp = explainer.explain_instance(
-    data_row = X_train[100].reshape(1,100,1),
-    classifier_fn = model.predict,
-    num_features = 100)
+    for i in range(10):
+        j = np.argmin(n)
+        minV.append((j,weights[j][1]))
+        n[j] = 10000000000
 
-weights = exp.as_list()
-minV, maxV = [], []
-t = [i[1] for i in weights]
-n = np.array(t)
-n_copy = n.copy()
+    for m in range(10):
+        k = np.argmax(n_copy)
+        maxV.append((k,weights[k][1]))
+        n_copy = np.delete(n_copy, k)
+        n_copy[k] = -10000000000
 
-for i in range(10):
-    j = np.argmin(n)
-    minV.append((j,weights[j][1]))
-    n[j] = 10000000000
+    minNames = [i[0] for i in minV]
+    minValues = [i[1] for i in minV]
+    maxNames = [i[0] for i in maxV]
+    maxValues = [i[1] for i in maxV]
+    minColors = ['green' if x > 0 else 'red' for x in minValues]
+    maxColors = ['green' if x > 0 else 'red' for x in maxValues]
+    figure, axes = plt.subplots(nrows=1, ncols=2)
+    figure.figsize= (16,8)
+    pos = np.arange(10)
 
-for m in range(10):
-    k = np.argmax(n_copy)
-    maxV.append((k,weights[k][1]))
-    n_copy = np.delete(n_copy, k)
-    n_copy[k] = -10000000000
+    axes[0].barh(pos, minValues, align='center', color=minColors)
+    axes[0].set_yticks(pos, minor=False)
+    axes[0].set_yticklabels(minNames, fontdict=None, minor=False)
+    axes[0].set_title('Lime Explaination (10 Min)')
+    axes[0].set_xlabel('Feature Contribution')
+    axes[0].set_ylabel('Days or Features of input')
 
-minNames = [i[0] for i in minV]
-minValues = [i[1] for i in minV]
-maxNames = [i[0] for i in maxV]
-maxValues = [i[1] for i in maxV]
-minColors = ['green' if x > 0 else 'red' for x in minValues]
-maxColors = ['green' if x > 0 else 'red' for x in maxValues]
-figure, axes = plt.subplots(nrows=1, ncols=2)
-figure.figsize= (16,8)
-pos = np.arange(10)
+    axes[1].barh(pos, maxValues, align='center', color=maxColors)
+    axes[1].set_yticks(pos, minor=False)
+    axes[1].set_yticklabels(maxNames, fontdict=None, minor=False)
+    axes[1].set_title('Lime Explaination (10 Max)')
+    axes[1].set_xlabel('Feature Contribution')
+    axes[1].set_ylabel('Days or Features of input')
 
-axes[0].barh(pos, minValues, align='center', color=minColors)
-axes[0].set_yticks(pos, minor=False)
-axes[0].set_yticklabels(minNames, fontdict=None, minor=False)
-axes[0].set_title('Lime Explaination (10 Min)')
-axes[0].set_xlabel('Feature Contribution')
-axes[0].set_ylabel('Days or Features of input')
+    #saving graphic
+    if not os.path.exists(config.get('vis','vis_path_folder4')):
+        os.makedirs( config.get('vis','vis_path_folder4'))
+    plt.savefig(config.get('vis','vis_path_folder4') + path)
 
-axes[1].barh(pos, maxValues, align='center', color=maxColors)
-axes[1].set_yticks(pos, minor=False)
-axes[1].set_yticklabels(maxNames, fontdict=None, minor=False)
-axes[1].set_title('Lime Explaination (10 Max)')
-axes[1].set_xlabel('Feature Contribution')
-axes[1].set_ylabel('Days or Features of input')
+    # plt.show()
 
-#saving graphic
-if not os.path.exists(config.get('vis','vis_path_folder3')):
-    os.makedirs( config.get('vis','vis_path_folder3'))
-plt.savefig(config.get('vis','vis_path_folder3') + '/lime_explain_minmax.png')
+    # fig = exp.as_pyplot_figure()    
+    # fig.figsize = (12,6)
+    # plt.title('Lime Explaination')
+    # plt.xlabel('Feature Contribution')
+    # plt.ylabel('Days or Features of input (With discretizer range)')
 
-plt.show()
+    # #saving graphic
+    # if not os.path.exists(config.get('vis','vis_path_folder3')):
+    #     os.makedirs( config.get('vis','vis_path_folder3'))
+    # plt.savefig(config.get('vis','vis_path_folder3') + '/lime_explain.png')
 
-fig = exp.as_pyplot_figure()    
-fig.figsize = (12,6)
-plt.title('Lime Explaination')
-plt.xlabel('Feature Contribution')
-plt.ylabel('Days or Features of input (With discretizer range)')
+    # plt.show()
 
-#saving graphic
-if not os.path.exists(config.get('vis','vis_path_folder3')):
-    os.makedirs( config.get('vis','vis_path_folder3'))
-plt.savefig(config.get('vis','vis_path_folder3') + '/lime_explain.png')
+def lime_explainer_function():
 
-plt.show()
+    model = load_model('Results\model_paths\stock_lstm_model.h5')
+
+    config=cp.RawConfigParser()
+    config.read('config/config.properties')
+
+    with open(config.get('data_path', 'train_x'), 'rb') as f:
+        X_train = pickle.load(f)
+    with open(config.get('data_path', 'test_x'), 'rb') as f:
+        y_train =pickle.load(f)
+    with open(config.get('data_path', 'min10errors'), 'wb') as f:
+        mins = pickle.load(f)
+    with open(config.get('data_path', 'max10errors'), 'wb') as f:
+        maxs = pickle.load(f)
+
+    print(X_train.shape)
+    print(y_train.shape)
+
+    explainer = lime_tabular.RecurrentTabularExplainer(
+        X_train,
+        mode="regression",
+        training_labels = y_train,
+        feature_names = ['1']) # ,'2','3','4','5','6','7','8','9','10','11','12'],
+        # discretize_continuous = False
+        # # class_names = ['a','b','c','d','e','f','g','h','i'],
+        # discretizer = 'decile')
+
+    for i, j in enumerate(mins):
+        path = "/lime_explain_least_" + str(i) + ".png"
+        instance_plotter(j, explainer, X_train, model, path)
+        print("Done "+str(i)+" rounds of deep explain")
+
+    for i, j in enumerate(maxs):
+        path = "/lime_explain_highest_" + str(i) + ".png"
+        instance_plotter(j, explainer, X_train, model, path)
+        print("Done "+str(i)+" rounds of deep explain")
+
+    print("Done explaining with lime")
