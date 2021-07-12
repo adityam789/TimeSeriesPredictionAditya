@@ -1,10 +1,8 @@
-import json
 from lime import lime_tabular
 import configparser as cp
 import pickle
 import matplotlib.pyplot as plt
 import os
-
 from keras.models import load_model
 import numpy as np
 
@@ -12,6 +10,7 @@ def instance_plotter(index, explainer, X_train, model, path):
 
     config=cp.RawConfigParser()
     config.read('config/config.properties')
+    print(index)
 
     exp = explainer.explain_instance(
         data_row = X_train[index].reshape(1,100,1),
@@ -32,7 +31,6 @@ def instance_plotter(index, explainer, X_train, model, path):
     for m in range(10):
         k = np.argmax(n_copy)
         maxV.append((k,weights[k][1]))
-        n_copy = np.delete(n_copy, k)
         n_copy[k] = -10000000000
 
     minNames = [i[0] for i in minV]
@@ -90,9 +88,10 @@ def lime_explainer_function():
         X_train = pickle.load(f)
     with open(config.get('data_path', 'test_x'), 'rb') as f:
         y_train =pickle.load(f)
-    with open(config.get('data_path', 'min10errors'), 'wb') as f:
+    print(os.path.getsize(config.get('data_path', 'min10errors')))
+    with open(config.get('data_path', 'min10errors'), 'rb') as f:
         mins = pickle.load(f)
-    with open(config.get('data_path', 'max10errors'), 'wb') as f:
+    with open(config.get('data_path', 'max10errors'), 'rb') as f:
         maxs = pickle.load(f)
 
     print(X_train.shape)
@@ -109,12 +108,12 @@ def lime_explainer_function():
 
     for i, j in enumerate(mins):
         path = "/lime_explain_least_" + str(i) + ".png"
-        instance_plotter(j, explainer, X_train, model, path)
+        instance_plotter(j[1], explainer, X_train, model, path)
         print("Done "+str(i)+" rounds of deep explain")
 
     for i, j in enumerate(maxs):
         path = "/lime_explain_highest_" + str(i) + ".png"
-        instance_plotter(j, explainer, X_train, model, path)
+        instance_plotter(j[1], explainer, X_train, model, path)
         print("Done "+str(i)+" rounds of deep explain")
 
     print("Done explaining with lime")

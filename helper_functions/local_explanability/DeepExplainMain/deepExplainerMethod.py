@@ -1,9 +1,10 @@
 import configparser as cp
 import pickle
 from keras import backend as K
+
 from keras.models import Model
 # from .examples.utils import plot, plt
-from deepexplain.tensorflow import DeepExplain
+from .deepexplain.tensorflow import DeepExplain
 from .plot import plotter
 
 from keras.models import load_model
@@ -19,9 +20,9 @@ def deep_explainer():
         X_train=pickle.load(f)
     with open( config.get('data_path', 'train_y'), 'rb') as f:
         X_test=pickle.load( f)
-    with open(config.get('data_path', 'min10errors'), 'wb') as f:
+    with open(config.get('data_path', 'min10errors'), 'rb') as f:
         mins = pickle.load(f)
-    with open(config.get('data_path', 'max10errors'), 'wb') as f:
+    with open(config.get('data_path', 'max10errors'), 'rb') as f:
         maxs = pickle.load(f)
 
     with DeepExplain(session=K.get_session()) as de:
@@ -44,28 +45,31 @@ def deep_explainer():
         #attributions_dl    = de.explain('deeplift', target_tensor, input_tensor, xs, ys=ys)
         #attributions_elrp  = de.explain('elrp', target_tensor, input_tensor, xs, ys=ys)
         #attributions_occ   = de.explain('occlusion', target_tensor, input_tensor, xs, ys=ys)
-        
+        print('Kuch toh hua hai')
         # Compare IntGradient with approximate Shapley Values
         # Note1: Shapley Value sampling with 100 samples per feature (78400 runs) takes a couple of minutes on a GPU.
         # Note2: 100 samples are not enough for convergence, the result might be affected by sampling variance
-        attributions_sv     = de.explain('shapley_sampling', target_tensor, input_tensor, xs, samples=100)
+        
+        # TODO This is insanely expensive. It has to compute nearly 6.35 million runs. Hell no for my PC
+        # attributions_sv     = de.explain('shapley_sampling', target_tensor, input_tensor, xs, samples=100)
+        print('Kuch ho gaya hai')
 
     print(type(attributions_ig))
-    print(type(attributions_sv))
+    # print(type(attributions_sv))
 
     with open(config.get('data_path', 'shapValues'), 'wb')  as f:
         pickle.dump(attributions_ig, f)	
-    with open(config.get('data_path', 'gradValues'), 'wb') as f:
-        pickle.dump(attributions_sv, f)	
+    # with open(config.get('data_path', 'gradValues'), 'wb') as f:
+    #     pickle.dump(attributions_sv, f)	
 
     for i, j in enumerate(mins):
         path = "/deep_explain_least_" + str(i) + ".png"
-        plotter(j, path, attributions_ig, attributions_sv)
+        plotter(j[1], path, attributions_ig, attributions_sv = None)
         print("Done "+str(i)+" rounds of deep explain")
 
     for i, j in enumerate(maxs):
         path = "/deep_explain_highest_" + str(i) + ".png"
-        plotter(j, path, attributions_ig, attributions_sv)
+        plotter(j[1], path, attributions_ig, attributions_sv = None)
         print("Done "+str(i)+" rounds of deep explain")
 
     print("Deep explain Done")

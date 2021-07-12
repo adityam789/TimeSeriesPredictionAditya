@@ -12,6 +12,16 @@ if not os.path.exists(dirname):
 json_report = dict()
 sep = '/'
 
+def readpngfiles(path):
+  files = []
+  # r=root, d=directories, f = files
+  for r, d, f in os.walk(path):
+    for file in f:
+      if '.png' in file:
+        files.append(os.path.join(r, file).replace("\\","/"))
+#   print(files)
+  return files
+
 def preprocessing_stage():
 
     mean_dist_words = "This is a graph for visualizing the movement of the dataset.\nIt uses a simple fundamental math concept of moving average of size 10 and 20 to show the general trend of data.\nThe x-axis represents the indexes of the data and the y-axis represents the data name."
@@ -22,7 +32,7 @@ def preprocessing_stage():
                                      'mean_plot.png'])
         d1= {
             'img_path': vis_path[10:],
-            'one_liner': mean_dist_words
+            # 'one_liner': mean_dist_words
         }
         mean_dist.update(d1)
    
@@ -54,7 +64,7 @@ def modelling_stage():
                                      'model_performance.png'])
         d1= {
             'img_path': mdl_prm[10:],
-            'one_liner': model_performance_words
+            # 'one_liner': model_performance_words
         }
         model_performance.update(d1)
         
@@ -64,7 +74,7 @@ def modelling_stage():
                                      'model_predection.png'])
         d1= {
             'img_path': mdl_pred[10:],
-            'one_liner': model_predection_words
+            # 'one_liner': model_predection_words
         }
         model_predection.update(d1)
 
@@ -74,7 +84,7 @@ def modelling_stage():
                                      'model_performance_CD.png'])
         d1= {
             'img_path': mdl_pred[10:],
-            'one_liner': model_with_drift_detection_performance_words
+            # 'one_liner': model_with_drift_detection_performance_words
         }
         model_with_drift_detection_performance.update(d1)
 
@@ -84,7 +94,7 @@ def modelling_stage():
                                      'MAE.png'])
         d1= {
             'img_path': mdl_pred[10:],
-            'one_liner': model_with_drift_detection_MAE_words
+            # 'one_liner': model_with_drift_detection_MAE_words
         }
         model_with_drift_detection_MAE.update(d1)
 
@@ -94,7 +104,7 @@ def modelling_stage():
                                      'performance_comparison.png'])
         d1= {
             'img_path': mdl_pred[10:],
-            'one_liner': models_comparison_words
+            # 'one_liner': models_comparison_words
         }
         models_comparison.update(d1)
 
@@ -104,7 +114,7 @@ def modelling_stage():
                                      'performance_difference_comparison.png'])
         d1= {
             'img_path': mdl_pred[10:],
-            'one_liner': models_MAE_comparison_words
+            # 'one_liner': models_MAE_comparison_words
         }
         models_MAE_comparison.update(d1)
 
@@ -122,7 +132,7 @@ def modelling_stage():
 
     return None
 
-def local_explainabilty_stage():
+def local_explainabilty_stage(path):
 
     deep_explain_words = "This shows attribution of every feature (Days in the time step) towards the target. It shows both the attribution by Integrated Gradients and Shapley Value sampling for a particular instance in the test dataset. Attribution is a real value R(x_i) for each input feature, with respect to a target neuron of interest. Positive value of feature shows that it contribute positively to the activation of the target output and vice-versa"
     source_citation = ["https://github.com/marcoancona/DeepExplain", "arxiv.org/abs/1711.06104"]
@@ -131,17 +141,27 @@ def local_explainabilty_stage():
     lime_explain_minmax_words = "This shows the 10 highest weighted features/ days and 10 least weighted features of a particular instance while generating its local explanability. A local explanation is a local linear approximation of the model's behaviour around the vicinity of a particular instance."
     source_citation = ["https://arxiv.org/abs/1602.04938", "https://github.com/marcotcr/lime", "https://stackoverflow.com/questions/61511874/how-can-i-use-lime-to-classify-my-time-series"]
     about = "Lime: Explaining the predictions of any machine learning classifier"
-    xai_explain_words = "This is a plot showing the importance of each feature/ day in the time step by showing the loss created upon randomly shuffling any one feature/day. More the negative loss, More important the feature is. It uses the test dataset to create loss evaluations."
-    source_citation = ["https://github.com/EthicalML/xai", "https://ethical.institute/principles.html#commitment-3", "https://ethicalml.github.io/xai/index.html"]
-    videos = ["https://www.youtube.com/watch?v=vq8mDiDODhc", "https://www.youtube.com/watch?v=GZpfBhQJ0H4"]
-    about = "XAI - An eXplainability toolbox for machine learning"
 
+    file_dir = readpngfiles(path+'/local_exp_paths')
+    lime_explain_imgs = []
+    deep_explain_imgs = []
+    for i in file_dir:
+        index = i.find('local_exp_paths/lime_explain')
+        if index != -1:
+            lime_explain_imgs.append(i[index:])
+        else:
+            index = i.find('local_exp_paths/deep_explain')
+            if index != -1:
+                deep_explain_imgs.append(i[index:])
+            else:
+                print("Error")
+    
     deep_explain = {}
     if config.getboolean('vis', 'deep_explain'):
         mdl_prm = sep.join([config.get('vis', 'vis_path_folder3'),
                                      'deep_explain.png'])
         d1= {
-            'img_path': mdl_prm[10:],
+            'img_path': deep_explain_imgs,
             'one_liner': deep_explain_words
         }
         deep_explain.update(d1)
@@ -161,10 +181,25 @@ def local_explainabilty_stage():
         mdl_pred = sep.join([config.get('vis', 'vis_path_folder3'),
                                      'lime_explain_minmax.png'])
         d1= {
-            'img_path': mdl_pred[10:],
+            'img_path': lime_explain_imgs,
             'one_liner': lime_explain_minmax_words
         }
         lime_explain_minmax.update(d1)
+
+    json_report["local_explainabilty"] = {
+        'deep_explain':deep_explain,
+        'lime_explain':lime_explain,
+        'lime_explain_minmax':lime_explain_minmax
+    }
+
+    return None
+
+def global_explainabilty_stage():
+
+    xai_explain_words = "This is a plot showing the importance of each feature/ day in the time step by showing the loss created upon randomly shuffling any one feature/day. More the negative loss, More important the feature is. It uses the test dataset to create loss evaluations."
+    source_citation = ["https://github.com/EthicalML/xai", "https://ethical.institute/principles.html#commitment-3", "https://ethicalml.github.io/xai/index.html"]
+    videos = ["https://www.youtube.com/watch?v=vq8mDiDODhc", "https://www.youtube.com/watch?v=GZpfBhQJ0H4"]
+    about = "XAI - An eXplainability toolbox for machine learning"
 
     xai_explain = {}
     if config.getboolean('vis', 'xai_explain'):
@@ -175,15 +210,9 @@ def local_explainabilty_stage():
             'one_liner': xai_explain_words
         }
         xai_explain.update(d1)
-
-    json_report["local_explainabilty"] = {
-        'deep_explain':deep_explain,
-        'lime_explain':lime_explain,
-        'lime_explain_minmax':lime_explain_minmax,
-        'xai_explain':xai_explain,
-        # 'Train Validation Test': {
-        #     'Train Validation Test Size': data_diagnostic_meta_info['train_val_test_split'],
-        # }
+        
+    json_report["global_explainabilty"] = {
+        'xai_explain':xai_explain
     }
 
     return None
@@ -191,13 +220,14 @@ def local_explainabilty_stage():
 def json_dump_generation():
     # Storing meta data into dict
     #if parser.getboolean('loading_data_diagnostic', 'set_execution'):
-    preprocessing_stage()
-    modelling_stage()
-    local_explainabilty_stage()
-    # dumping the JSON file
-    print('json_report', json_report)
     path = os.getcwd() + '/Results'
     # print(path)
+    preprocessing_stage()
+    modelling_stage()
+    local_explainabilty_stage(path)
+    global_explainabilty_stage()
+    # dumping the JSON file
+    # print('json_report', json_report)
     os.chdir(path)
     with open(f'json_metadata.json', 'w') as fp:
         json.dump(json_report, fp)
