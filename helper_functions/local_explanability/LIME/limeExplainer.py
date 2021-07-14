@@ -109,11 +109,11 @@ def lime_explainer_function():
     for i, j in enumerate(mins):
         path = "/lime_explain_least_" + str(i) + ".png"
         instance_plotter(j[1], explainer, X_train, model, path)
-        print("Done "+str(i)+" rounds of deep explain")
+        print("Done "+str(i)+" rounds of lime explain")
 
     for i, j in enumerate(maxs):
         path = "/lime_explain_highest_" + str(i) + ".png"
         instance_plotter(j[1], explainer, X_train, model, path)
-        print("Done "+str(i)+" rounds of deep explain")
+        print("Done "+str(i)+" rounds of lime explain")
 
     print("Done explaining with lime")

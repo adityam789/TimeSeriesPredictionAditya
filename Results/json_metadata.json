@@ -18,44 +18,56 @@
   },
   "local_explainabilty": {
     "deep_explain": {
-      "img_path": [
-        "local_exp_paths/deep_explain/deep_explain_highest_0.png",
-        "local_exp_paths/deep_explain/deep_explain_highest_1.png",
-        "local_exp_paths/deep_explain/deep_explain_highest_2.png",
-        "local_exp_paths/deep_explain/deep_explain_highest_3.png",
-        "local_exp_paths/deep_explain/deep_explain_highest_4.png",
-        "local_exp_paths/deep_explain/deep_explain_least_0.png",
-        "local_exp_paths/deep_explain/deep_explain_least_1.png",
-        "local_exp_paths/deep_explain/deep_explain_least_2.png",
-        "local_exp_paths/deep_explain/deep_explain_least_3.png",
-        "local_exp_paths/deep_explain/deep_explain_least_4.png"
-      ],
-      "one_liner": "This shows attribution of every feature (Days in the time step) towards the target. It shows both the attribution by Integrated Gradients and Shapley Value sampling for a particular instance in the test dataset. Attribution is a real value R(x_i) for each input feature, with respect to a target neuron of interest. Positive value of feature shows that it contribute positively to the activation of the target output and vice-versa"
+      "one_liner": "This shows attribution of every feature (Days in the time step) towards the target. It shows both the attribution by Integrated Gradients and Shapley Value sampling for a particular instance in the test dataset. Attribution is a real value R(x_i) for each input feature, with respect to a target neuron of interest. Positive value of feature shows that it contribute positively to the activation of the target output and vice-versa",
+      "highest error instances": {
+        "img_path": [
+          "local_exp_paths/deep_explain/deep_explain_highest_0.png",
+          "local_exp_paths/deep_explain/deep_explain_highest_1.png",
+          "local_exp_paths/deep_explain/deep_explain_highest_2.png",
+          "local_exp_paths/deep_explain/deep_explain_highest_3.png",
+          "local_exp_paths/deep_explain/deep_explain_highest_4.png"
+        ]
+      },
+      "least error instances": {
+        "img_path": [
+          "local_exp_paths/deep_explain/deep_explain_least_0.png",
+          "local_exp_paths/deep_explain/deep_explain_least_1.png",
+          "local_exp_paths/deep_explain/deep_explain_least_2.png",
+          "local_exp_paths/deep_explain/deep_explain_least_3.png",
+          "local_exp_paths/deep_explain/deep_explain_least_4.png"
+        ]
+      }
     },
     "lime_explain": {
-      "img_path": "local_exp_paths/deep_explain/lime_explain.png",
-      "one_liner": "This shows the local explanation of a particular instance in the training set. The graph shows the explanation of all 100 features for an instance. A local explanation is a local linear approximation of the model's behaviour around the vicinity of a particular instance."
+      "one_liner": "This shows the local explanation of a particular instance in the training set. The graph shows the explanation of all 100 features for an instance. A local explanation is a local linear approximation of the model's behaviour around the vicinity of a particular instance.",
+      "img_path": "local_exp_paths/deep_explain/lime_explain.png"
     },
     "lime_explain_minmax": {
-      "img_path": [
-        "local_exp_paths/lime_explain/lime_explain_highest_0.png",
-        "local_exp_paths/lime_explain/lime_explain_highest_1.png",
-        "local_exp_paths/lime_explain/lime_explain_highest_2.png",
-        "local_exp_paths/lime_explain/lime_explain_highest_3.png",
-        "local_exp_paths/lime_explain/lime_explain_highest_4.png",
-        "local_exp_paths/lime_explain/lime_explain_least_0.png",
-        "local_exp_paths/lime_explain/lime_explain_least_1.png",
-        "local_exp_paths/lime_explain/lime_explain_least_2.png",
-        "local_exp_paths/lime_explain/lime_explain_least_3.png",
-        "local_exp_paths/lime_explain/lime_explain_least_4.png"
-      ],
-      "one_liner": "This shows the 10 highest weighted features/ days and 10 least weighted features of a particular instance while generating its local explanability. A local explanation is a local linear approximation of the model's behaviour around the vicinity of a particular instance."
+      "one_liner": "This shows the 10 highest weighted features/ days and 10 least weighted features of a particular instance while generating its local explanability. A local explanation is a local linear approximation of the model's behaviour around the vicinity of a particular instance.",
+      "highest error instances": {
+        "img_path": [
+          "local_exp_paths/lime_explain/lime_explain_highest_0.png",
+          "local_exp_paths/lime_explain/lime_explain_highest_1.png",
+          "local_exp_paths/lime_explain/lime_explain_highest_2.png",
+          "local_exp_paths/lime_explain/lime_explain_highest_3.png",
+          "local_exp_paths/lime_explain/lime_explain_highest_4.png"
+        ]
+      },
+      "least error instances": {
+        "img_path": [
+          "local_exp_paths/lime_explain/lime_explain_least_0.png",
+          "local_exp_paths/lime_explain/lime_explain_least_1.png",
+          "local_exp_paths/lime_explain/lime_explain_least_2.png",
+          "local_exp_paths/lime_explain/lime_explain_least_3.png",
+          "local_exp_paths/lime_explain/lime_explain_least_4.png"
+        ]
+      }
     }
   },
   "global_explainabilty": {
     "xai_explain": {
-      "img_path": "local_exp_paths/deep_explain/xai_explain.png",
-      "one_liner": "This is a plot showing the importance of each feature/ day in the time step by showing the loss created upon randomly shuffling any one feature/day. More the negative loss, More important the feature is. It uses the test dataset to create loss evaluations."
+      "one_liner": "This is a plot showing the importance of each feature/ day in the time step by showing the loss created upon randomly shuffling any one feature/day. More the negative loss, More important the feature is. It uses the test dataset to create loss evaluations.",
+      "img_path": "local_exp_paths/deep_explain/xai_explain.png"
     }
   }
 }

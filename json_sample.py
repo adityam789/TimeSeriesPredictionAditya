@@ -145,6 +145,7 @@ def local_explainabilty_stage(path):
     file_dir = readpngfiles(path+'/local_exp_paths')
     lime_explain_imgs = []
     deep_explain_imgs = []
+    
     for i in file_dir:
         index = i.find('local_exp_paths/lime_explain')
         if index != -1:
@@ -155,14 +156,24 @@ def local_explainabilty_stage(path):
                 deep_explain_imgs.append(i[index:])
             else:
                 print("Error")
+
+    lime_explain_img_highest_error = lime_explain_imgs[:5]
+    lime_explain_img_lowest_error = lime_explain_imgs[5:]
+    deep_explain_img_highest_error = deep_explain_imgs[:5]
+    deep_explain_img_lowest_error = deep_explain_imgs[5:]
     
     deep_explain = {}
     if config.getboolean('vis', 'deep_explain'):
         mdl_prm = sep.join([config.get('vis', 'vis_path_folder3'),
                                      'deep_explain.png'])
         d1= {
-            'img_path': deep_explain_imgs,
-            'one_liner': deep_explain_words
+            'one_liner': deep_explain_words,
+            'highest error instances':{
+                'img_path': deep_explain_img_highest_error
+            },
+            'least error instances':{
+                'img_path': deep_explain_img_lowest_error
+            }
         }
         deep_explain.update(d1)
         
@@ -171,8 +182,8 @@ def local_explainabilty_stage(path):
         mdl_pred = sep.join([config.get('vis', 'vis_path_folder3'),
                                      'lime_explain.png'])
         d1= {
-            'img_path': mdl_pred[10:],
-            'one_liner': lime_explain_words
+            'one_liner': lime_explain_words,
+            'img_path': mdl_pred[10:]
         }
         lime_explain.update(d1)
 
@@ -181,8 +192,13 @@ def local_explainabilty_stage(path):
         mdl_pred = sep.join([config.get('vis', 'vis_path_folder3'),
                                      'lime_explain_minmax.png'])
         d1= {
-            'img_path': lime_explain_imgs,
-            'one_liner': lime_explain_minmax_words
+            'one_liner': lime_explain_minmax_words,
+            'highest error instances':{
+                'img_path': lime_explain_img_highest_error
+            },
+            'least error instances':{
+                'img_path': lime_explain_img_lowest_error
+            }
         }
         lime_explain_minmax.update(d1)
 
@@ -206,8 +222,8 @@ def global_explainabilty_stage():
         mdl_pred = sep.join([config.get('vis', 'vis_path_folder3'),
                                      'xai_explain.png'])
         d1= {
-            'img_path': mdl_pred[10:],
-            'one_liner': xai_explain_words
+            'one_liner': xai_explain_words,
+            'img_path': mdl_pred[10:]
         }
         xai_explain.update(d1)
         

@@ -41,12 +41,16 @@ def xai_explainer():
 
     imp = feature_importance(X_test.copy(), y_test, get_avg, repeat=1)
 
+    print('processing')
+
     fig = plt.figure(figsize=(10,5))
     graph = fig.add_subplot()
     graph.plot(imp)
     plt.title('xAI Explaination')
     plt.xlabel('Days or Features of input')
     plt.ylabel('Relative Loss (Base score - new score)')
+
+    print('Done')
 
     #saving graphic
     if not os.path.exists(config.get('vis','vis_path_folder5')):
