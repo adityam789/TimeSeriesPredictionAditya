@@ -64,12 +64,12 @@ def deep_explainer():
 
     for i, j in enumerate(mins):
         path = "/deep_explain_least_" + str(i) + ".png"
-        plotter(j[1], path, attributions_ig, attributions_sv = None)
+        plotter(j[1], path, attributions_ig, attributions_sv = None, max= False)
         print("Done "+str(i)+" rounds of deep explain")
 
     for i, j in enumerate(maxs):
         path = "/deep_explain_highest_" + str(i) + ".png"
-        plotter(j[1], path, attributions_ig, attributions_sv = None)
+        plotter(j[1], path, attributions_ig, attributions_sv = None, max= True)
         print("Done "+str(i)+" rounds of deep explain")
 
     print("Deep explain Done")

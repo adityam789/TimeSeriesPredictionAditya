@@ -2,7 +2,7 @@ import configparser as cp
 import matplotlib.pyplot as plt
 import os
 
-def plotter(i, imgPath, attributions_ig, attributions_sv):
+def plotter(i, imgPath, attributions_ig, attributions_sv, max):
 
 	config=cp.RawConfigParser()
 	config.read('config/config.properties')	
@@ -20,9 +20,15 @@ def plotter(i, imgPath, attributions_ig, attributions_sv):
 	plt.xlabel('Days or Features of input')
 	plt.ylabel('Attributions')
 
-	#saving graphic
-	if not os.path.exists(config.get('vis','vis_path_folder3')):
-		os.makedirs( config.get('vis','vis_path_folder3'))
-	plt.savefig(config.get('vis','vis_path_folder3') + imgPath)
+	if max:
+		#saving graphic
+		if not os.path.exists(config.get('vis','vis_path_folder9')):
+			os.makedirs( config.get('vis','vis_path_folder9'))
+		plt.savefig(config.get('vis','vis_path_folder9') + imgPath)
+	else:
+		#saving graphic
+		if not os.path.exists(config.get('vis','vis_path_folder3')):
+			os.makedirs( config.get('vis','vis_path_folder3'))
+		plt.savefig(config.get('vis','vis_path_folder3') + imgPath)
 
 	# plt.show()

@@ -1,18 +1,14 @@
-import numpy as np
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense,Dropout,LSTM,Activation
 import matplotlib.pyplot as plt
 from lstm_ts_viz_class import TSViz
 from matplotlib.backends.backend_tkagg import (
 	FigureCanvasTkAgg, NavigationToolbar2Tk)
 from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
-import time
 import matplotlib.pyplot as plt
 from tkinter import *
 import sys
 import webbrowser
-from PIL import ImageTk, Image, ImageDraw
+from PIL import Image
 import numpy as np
 
 # from tkinter import *
@@ -148,7 +144,7 @@ def playIt():
 		Label(master, text=str('Epoch='+str(i))).grid(row=1, column=4, sticky=S) 
 		i=i+1
 		master.update()
-		fig.savefig('canvas.png')
+		# fig.savefig('canvas.png')
 		# master.postscript(file="file_name.ps", colormode='color')
 		# save_as_png(master, "homer")
 		#time.sleep(0.0001)

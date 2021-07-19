@@ -6,7 +6,7 @@ import os
 from keras.models import load_model
 import numpy as np
 
-def instance_plotter(index, explainer, X_train, model, path):
+def instance_plotter(index, explainer, X_train, model, path, max):
 
     config=cp.RawConfigParser()
     config.read('config/config.properties')
@@ -57,10 +57,16 @@ def instance_plotter(index, explainer, X_train, model, path):
     axes[1].set_xlabel('Feature Contribution')
     axes[1].set_ylabel('Days or Features of input')
 
-    #saving graphic
-    if not os.path.exists(config.get('vis','vis_path_folder4')):
-        os.makedirs( config.get('vis','vis_path_folder4'))
-    plt.savefig(config.get('vis','vis_path_folder4') + path)
+    if max:
+        #saving graphic
+        if not os.path.exists(config.get('vis','vis_path_folder10')):
+            os.makedirs( config.get('vis','vis_path_folder10'))
+        plt.savefig(config.get('vis','vis_path_folder10') + path)
+    else:
+        #saving graphic
+        if not os.path.exists(config.get('vis','vis_path_folder4')):
+            os.makedirs( config.get('vis','vis_path_folder4'))
+        plt.savefig(config.get('vis','vis_path_folder4') + path)
 
     # plt.show()
 
@@ -108,12 +114,12 @@ def lime_explainer_function():
 
     for i, j in enumerate(mins):
         path = "/lime_explain_least_" + str(i) + ".png"
-        instance_plotter(j[1], explainer, X_train, model, path)
+        instance_plotter(j[1], explainer, X_train, model, path, max= False)
         print("Done "+str(i)+" rounds of lime explain")
 
     for i, j in enumerate(maxs):
         path = "/lime_explain_highest_" + str(i) + ".png"
-        instance_plotter(j[1], explainer, X_train, model, path)
+        instance_plotter(j[1], explainer, X_train, model, path, max = True)
         print("Done "+str(i)+" rounds of lime explain")
 
     print("Done explaining with lime")

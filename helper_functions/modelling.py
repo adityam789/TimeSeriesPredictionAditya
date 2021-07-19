@@ -7,6 +7,7 @@ import pandas as pd
 import configparser as cp
 import pickle
 import os
+import time
 from sklearn.metrics import mean_squared_error
 from sklearn.metrics import mean_absolute_error
 from sklearn.metrics import r2_score
@@ -51,14 +52,16 @@ def model_making():
                   metrics=['accuracy', 'binary_crossentropy'])
     print(model.summary())
 
-    model.fit(X_train, y_train, validation_data=(X_test, ytest), epochs=config.getint(
+    start1 = time.time()
+    hist_model = model.fit(X_train, y_train, validation_data=(X_test, ytest), epochs=config.getint(
         'model_params', 'epochs'), batch_size=config.getint('model_params', 'batch_size'), verbose=1)
     train_predict = model.predict(X_train)
     test_predict = model.predict(X_test)
+    end1 = time.time()
 
     # Scores
     RMSE2 = math.sqrt(mean_squared_error(y_train, train_predict))
-    print(RMSE2)
+    
     # print(math.sqrt(mean_squared_error(y_train,train_predict)),math.sqrt(mean_squared_error(ytest,test_predict)))
     # print(math.sqrt(mean_squared_error(ytest,test_predict)))
     # print(mean_absolute_error(ytest,test_predict))
@@ -81,6 +84,7 @@ def model_making():
 
     predict1 = np.array([[1]])
     predict2 = np.array([[1]])
+    start2 = time.time()
     for k in range(len(train_data_change_detected_ADWIN)-1):
         X_batch = X_train[train_data_change_detected_ADWIN[k]:train_data_change_detected_ADWIN[k+1]]
         y_batch = y_train[train_data_change_detected_ADWIN[k]:train_data_change_detected_ADWIN[k+1]]
@@ -93,18 +97,26 @@ def model_making():
         for l in range(len(w)):
             w[l] = w[l] - (w[l]*0.001*a_score)  # 0.001=learning rate
         model2.layers[0].set_weights(w)
-        model2.fit(X_batch, up_y, epochs=config.getint(
+        hist_model2 = model2.fit(X_batch, up_y, epochs=config.getint(
             'model_params', 'epochs'), verbose=1)
         pred2 = model2.predict_on_batch(X_batch)
         predict2 = np.concatenate((predict2, pred2), axis=0)
         model2.reset_states()
-
+    end2 = time.time()
     predict1 = np.delete(predict1, 0, 0)
     predict2 = np.delete(predict2, 0, 0)
 
     # Scores
     RMSE = math.sqrt(mean_squared_error(y_train, predict2.flatten()))
     print(RMSE)
+    print(RMSE2)
+    print(end1 - start1)
+    print(end2 - start2)
+
+    # print("Line 109 ", model.evaluate(X_test, ytest))
+    # print("Line 110 ", model2.evaluate(X_test, ytest))
+    # print("Line 111 ", hist_model.history['accuracy'])
+    # print("Line 112 ", hist_model2.history)
 
     models_path_folder = config.get('models_path', 'models_path_folder')
 
