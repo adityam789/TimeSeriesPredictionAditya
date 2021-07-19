@@ -38,7 +38,6 @@ explainer = shap.KernelExplainer(f, X_train_summary, link="logit")
 with open(config.get('data_path', 'shap_values_global'), 'rb') as f:
     shap_values = pickle.load(f)
 
-# shap.summary_plot(shap_values)
 print(len(shap_values))
 shap.summary_plot(shap_values[-1], X_test, show = False)
 
@@ -46,15 +45,18 @@ if not os.path.exists(config.get('vis','vis_path_folder8')):
     os.makedirs( config.get('vis','vis_path_folder8'))
 plt.savefig(config.get('vis','vis_path_folder8') + '/shap_global_explain_summary_plot.png')
 
-# shap.dependence_plot("bmi", shap_values[-1], X_test[:10])
 print(shap_values[-1][0].reshape(1,100).shape)
 t = shap.force_plot(explainer.expected_value[0], shap_values[-1][0].reshape(1,100), X_test[0], matplotlib = True, show = False)
 if not os.path.exists(config.get('vis','vis_path_folder8')):
     os.makedirs( config.get('vis','vis_path_folder8'))
 plt.savefig(config.get('vis','vis_path_folder8') + '/shap_global_explain_force_plot.png')
 
+
+# Things that don't work....
+# print('here')
 # shap.force_plot(explainer.expected_value[0], shap_values[0], X_test, matplotlib = True, show = False)
-shap.force_plot(explainer.expected_value[0], shap_values[0], X_test, link="logit")
+# shap.force_plot(explainer.expected_value[0], shap_values[0], X_test, link="logit")
+# plt.show()
 # print(explainer.expected_value)
 # print(len(shap_values[0]))
 # t = shap.force_plot(explainer.expected_value[0], shap_values[0],  link="logit", show=True)
