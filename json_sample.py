@@ -137,30 +137,35 @@ def local_explainabilty_stage(path):
     deep_explain_words = "This shows attribution of every feature (Days in the time step) towards the target. It shows both the attribution by Integrated Gradients and Shapley Value sampling for a particular instance in the test dataset. Attribution is a real value R(x_i) for each input feature, with respect to a target neuron of interest. Positive value of feature shows that it contribute positively to the activation of the target output and vice-versa"
     source_citation = ["https://github.com/marcoancona/DeepExplain", "arxiv.org/abs/1711.06104"]
     about = "A unified framework of perturbation and gradient-based attribution methods for Deep Neural Networks interpretability. DeepExplain also includes support for Shapley Values sampling. (ICLR 2018)"
-    lime_explain_words = "This shows the local explanation of a particular instance in the training set. The graph shows the explanation of all 100 features for an instance. A local explanation is a local linear approximation of the model's behaviour around the vicinity of a particular instance."
+    # lime_explain_words = "This shows the local explanation of a particular instance in the training set. The graph shows the explanation of all 100 features for an instance. A local explanation is a local linear approximation of the model's behaviour around the vicinity of a particular instance."
     lime_explain_minmax_words = "This shows the 10 highest weighted features/ days and 10 least weighted features of a particular instance while generating its local explanability. A local explanation is a local linear approximation of the model's behaviour around the vicinity of a particular instance."
     source_citation = ["https://arxiv.org/abs/1602.04938", "https://github.com/marcotcr/lime", "https://stackoverflow.com/questions/61511874/how-can-i-use-lime-to-classify-my-time-series"]
     about = "Lime: Explaining the predictions of any machine learning classifier"
 
     file_dir = readpngfiles(path+'/local_exp_paths')
-    lime_explain_imgs = []
-    deep_explain_imgs = []
-    
+    lime_explain_img_highest_error = []
+    lime_explain_img_lowest_error = []
+    deep_explain_img_highest_error = []
+    deep_explain_img_lowest_error = []
+
     for i in file_dir:
         index = i.find('local_exp_paths/lime_explain')
         if index != -1:
-            lime_explain_imgs.append(i[index:])
+            subIndex = i[index:].find("/max")
+            if subIndex == -1:
+                lime_explain_img_highest_error.append(i[index:])
+            else:
+                lime_explain_img_lowest_error.append(i[index:])
         else:
             index = i.find('local_exp_paths/deep_explain')
             if index != -1:
-                deep_explain_imgs.append(i[index:])
+                subIndex = i[index:].find("/max")
+                if subIndex == -1:
+                    deep_explain_img_highest_error.append(i[index:])
+                else:
+                    deep_explain_img_lowest_error.append(i[index:])
             else:
                 print("Error")
-
-    lime_explain_img_highest_error = lime_explain_imgs[:5]
-    lime_explain_img_lowest_error = lime_explain_imgs[5:]
-    deep_explain_img_highest_error = deep_explain_imgs[:5]
-    deep_explain_img_lowest_error = deep_explain_imgs[5:]
     
     deep_explain = {}
     if config.getboolean('vis', 'deep_explain'):
@@ -177,19 +182,19 @@ def local_explainabilty_stage(path):
         }
         deep_explain.update(d1)
         
-    lime_explain = {}
-    if config.getboolean('vis', 'lime_explain'):
-        mdl_pred = sep.join([config.get('vis', 'vis_path_folder3'),
-                                     'lime_explain.png'])
-        d1= {
-            'one_liner': lime_explain_words,
-            'img_path': mdl_pred[10:]
-        }
-        lime_explain.update(d1)
+    # lime_explain = {}
+    # if config.getboolean('vis', 'lime_explain'):
+    #     mdl_pred = sep.join([config.get('vis', 'vis_path_folder3'),
+    #                                  'lime_explain.png'])
+    #     d1= {
+    #         'one_liner': lime_explain_words,
+    #         'img_path': mdl_pred[10:]
+    #     }
+    #     lime_explain.update(d1)
 
     lime_explain_minmax = {}
     if config.getboolean('vis', 'lime_explain_minmax'):
-        mdl_pred = sep.join([config.get('vis', 'vis_path_folder3'),
+        mdl_pred = sep.join([config.get('vis', 'vis_path_folder4'),
                                      'lime_explain_minmax.png'])
         d1= {
             'one_liner': lime_explain_minmax_words,
@@ -202,10 +207,26 @@ def local_explainabilty_stage(path):
         }
         lime_explain_minmax.update(d1)
 
+    log_return_explain = {}
+    if config.getboolean('vis', 'long_return_explain'):
+        mdl_pred = sep.join([config.get('vis', 'vis_path_folder7'),
+                                     'long_return_explain.png'])
+        d1= {
+            'one_liner': "",
+            'img_path': mdl_pred[10:]
+            # 'highest error instances':{
+            #     'img_path': lime_explain_img_highest_error
+            # },
+            # 'least error instances':{
+            #     'img_path': lime_explain_img_lowest_error
+            # }
+        }
+        log_return_explain.update(d1)
+
     json_report["local_explainabilty"] = {
         'deep_explain':deep_explain,
-        'lime_explain':lime_explain,
-        'lime_explain_minmax':lime_explain_minmax
+        'lime_explain_minmax':lime_explain_minmax,
+        'log_return_explain':log_return_explain
     }
 
     return None
@@ -219,16 +240,42 @@ def global_explainabilty_stage():
 
     xai_explain = {}
     if config.getboolean('vis', 'xai_explain'):
-        mdl_pred = sep.join([config.get('vis', 'vis_path_folder3'),
+        mdl_pred = sep.join([config.get('vis', 'vis_path_folder5'),
                                      'xai_explain.png'])
         d1= {
             'one_liner': xai_explain_words,
             'img_path': mdl_pred[10:]
         }
         xai_explain.update(d1)
-        
+
+    ALE_explain = {}
+    if config.getboolean('vis', 'ALE_explain'):
+        mdl_pred = sep.join([config.get('vis', 'vis_path_folder6'),
+                                     'ALE_explain_max5_features.png'])
+        mdl_pred2 = sep.join([config.get('vis', 'vis_path_folder6'),
+                                     'ALE_explain_min5_features.png'])
+        d1= {
+            'one_liner': "",
+            'img_path': [mdl_pred[10:], mdl_pred2[10:]]
+        }
+        ALE_explain.update(d1)
+
+    SHAP_global_explain = {}
+    if config.getboolean('vis', 'shap_global_explain'):
+        mdl_pred = sep.join([config.get('vis', 'vis_path_folder8'),
+                                     'shap_global_explain_summary_plot.png'])
+        mdl_pred2 = sep.join([config.get('vis', 'vis_path_folder8'),
+                                     'shap_global_explain_force_plot.png'])
+        d1= {
+            'one_liner': "",
+            'img_path': [mdl_pred[10:], mdl_pred2[10:]]
+        }
+        ALE_explain.update(d1)
+
     json_report["global_explainabilty"] = {
-        'xai_explain':xai_explain
+        'xai_explain':xai_explain,
+        'ALE_explain':ALE_explain,
+        'SHAP_global_explain':SHAP_global_explain
     }
 
     return None
