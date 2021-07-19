@@ -135,12 +135,17 @@ def modelling_stage():
 def local_explainabilty_stage(path):
 
     deep_explain_words = "This shows attribution of every feature (Days in the time step) towards the target. It shows both the attribution by Integrated Gradients and Shapley Value sampling for a particular instance in the test dataset. Attribution is a real value R(x_i) for each input feature, with respect to a target neuron of interest. Positive value of feature shows that it contribute positively to the activation of the target output and vice-versa"
+    deep_Explain_folder_words = "In this pipeline we display the deep explain plots for the 10 instances, 5 instances with the least absolute error and 5 instances with the maximum absolute error while training."
     source_citation = ["https://github.com/marcoancona/DeepExplain", "arxiv.org/abs/1711.06104"]
     about = "A unified framework of perturbation and gradient-based attribution methods for Deep Neural Networks interpretability. DeepExplain also includes support for Shapley Values sampling. (ICLR 2018)"
     # lime_explain_words = "This shows the local explanation of a particular instance in the training set. The graph shows the explanation of all 100 features for an instance. A local explanation is a local linear approximation of the model's behaviour around the vicinity of a particular instance."
     lime_explain_minmax_words = "This shows the 10 highest weighted features/ days and 10 least weighted features of a particular instance while generating its local explanability. A local explanation is a local linear approximation of the model's behaviour around the vicinity of a particular instance."
+    lime_Explain_folder_words = "In this pipeline we display the lime explain plots for the 10 instances, 5 instances with the least absolute error and 5 instances with the maximum absolute error while training."
     source_citation = ["https://arxiv.org/abs/1602.04938", "https://github.com/marcotcr/lime", "https://stackoverflow.com/questions/61511874/how-can-i-use-lime-to-classify-my-time-series"]
     about = "Lime: Explaining the predictions of any machine learning classifier"
+    # TODO Shobit add the one liner for log return and the source/ about.
+    log_return_explain_words = ""
+    about = ""
 
     file_dir = readpngfiles(path+'/local_exp_paths')
     lime_explain_img_highest_error = []
@@ -172,7 +177,7 @@ def local_explainabilty_stage(path):
         mdl_prm = sep.join([config.get('vis', 'vis_path_folder3'),
                                      'deep_explain.png'])
         d1= {
-            'one_liner': deep_explain_words,
+            'one_liner': deep_explain_words + deep_Explain_folder_words,
             'highest error instances':{
                 'img_path': deep_explain_img_highest_error
             },
@@ -197,7 +202,7 @@ def local_explainabilty_stage(path):
         mdl_pred = sep.join([config.get('vis', 'vis_path_folder4'),
                                      'lime_explain_minmax.png'])
         d1= {
-            'one_liner': lime_explain_minmax_words,
+            'one_liner': lime_explain_minmax_words + lime_Explain_folder_words,
             'highest error instances':{
                 'img_path': lime_explain_img_highest_error
             },
@@ -237,6 +242,14 @@ def global_explainabilty_stage():
     source_citation = ["https://github.com/EthicalML/xai", "https://ethical.institute/principles.html#commitment-3", "https://ethicalml.github.io/xai/index.html"]
     videos = ["https://www.youtube.com/watch?v=vq8mDiDODhc", "https://www.youtube.com/watch?v=GZpfBhQJ0H4"]
     about = "XAI - An eXplainability toolbox for machine learning"
+    ALE_explain_words = "This is a plot showing how features influence the prediction of a machine learning model on average. ALE plots show you how the model predictions change in a small `window` of the feature around v for data instances in that window. The x axis represents the quantiles of the distribution of the feature are used as the grid that defines the intervals; the y axis represents the ALE values of the instances in the grid."
+    ALE_Explain_folder_words = "In this pipeline we see the 2 graph representing the 5 maximum contributing features ALE plots and 5 minimum contributing features ALE plots. It uses only 10 data instances of the test data but can be increased."
+    source_citation = ["https://github.com/SeldonIO/alibi", "https://docs.seldon.io/projects/alibi/en/stable/methods/ALE.html", "https://arxiv.org/abs/1612.08468"]
+    about = "Algorithms for explaining machine learning models"
+    SHAP_global_explain_words = "This is a plot which shows the SHAP values using a kernel explainer, a specially-weighted local linear regression to estimate SHAP values for any model. The shap values are additive feature attributions which refers to the fact that the change of an outcome to be explained with respect to a baseline in different proportions to the model input features. The x axis represents the SHAP(SHapley Additive exPlanations) values and y-axis represents the feature/ day."
+    SHAP_global_Explain_folder_words =  "In this pipeline, we see the summary plot of the test dataset, SHAP values for each feature. And a force plot showing the output value which is the prediction for that observation; Red/blue represents Features that push the prediction higher (to the right) are shown in red, and those pushing the prediction lower are in blue."
+    source_citation = ["https://github.com/slundberg/shap, https://www.nature.com/articles/s41551-018-0304-0", "https://proceedings.neurips.cc/paper/2017/hash/8a20a8621978632d76c43dfd28b67767-Abstract.html"]
+    about = "A game theoretic approach to explain the output of any machine learning model."
 
     xai_explain = {}
     if config.getboolean('vis', 'xai_explain'):
@@ -255,7 +268,7 @@ def global_explainabilty_stage():
         mdl_pred2 = sep.join([config.get('vis', 'vis_path_folder6'),
                                      'ALE_explain_min5_features.png'])
         d1= {
-            'one_liner': "",
+            'one_liner': ALE_explain_words + ALE_Explain_folder_words,
             'img_path': [mdl_pred[10:], mdl_pred2[10:]]
         }
         ALE_explain.update(d1)
@@ -267,7 +280,7 @@ def global_explainabilty_stage():
         mdl_pred2 = sep.join([config.get('vis', 'vis_path_folder8'),
                                      'shap_global_explain_force_plot.png'])
         d1= {
-            'one_liner': "",
+            'one_liner': SHAP_global_explain_words + SHAP_global_Explain_folder_words,
             'img_path': [mdl_pred[10:], mdl_pred2[10:]]
         }
         ALE_explain.update(d1)
