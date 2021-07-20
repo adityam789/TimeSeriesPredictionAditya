@@ -4,7 +4,6 @@ from matplotlib.backends.backend_tkagg import (
 	FigureCanvasTkAgg, NavigationToolbar2Tk)
 from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
-import matplotlib.pyplot as plt
 from tkinter import *
 import sys
 import webbrowser

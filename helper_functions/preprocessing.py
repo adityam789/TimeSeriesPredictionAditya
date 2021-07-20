@@ -1,7 +1,5 @@
 import numpy as np
 from sklearn.preprocessing import MinMaxScaler
-import tensorflow as tf
-import math
 import pandas as pd
 import configparser as cp
 import os
@@ -25,10 +23,12 @@ def create_dataset(dataset, time_step=1):
         dataY.append(dataset[i + time_step, 0])
     return np.array(dataX), np.array(dataY)
 
-def preprocessing():
+def preprocessing(path = None):
 
-	df = pd.read_csv(config.get('dataset_path', 'csv_path'))
-	# df = pd.read_csv(path)
+	if path == None:
+		df = pd.read_csv(config.get('dataset_path', 'csv_path'))
+	else:
+		df = pd.read_csv(path)
 	df1 = df[[config.get('target_column', 'target_column')]]
 	df2 = df[[config.get('target_column', 'target_column')]]
 

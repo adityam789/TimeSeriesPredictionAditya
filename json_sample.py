@@ -145,6 +145,7 @@ def local_explainabilty_stage(path):
     about = "Lime: Explaining the predictions of any machine learning classifier"
     # TODO Shobit add the one liner for log return and the source/ about.
     log_return_explain_words = ""
+    source_citation = ""
     about = ""
 
     file_dir = readpngfiles(path+'/local_exp_paths')
@@ -170,7 +171,7 @@ def local_explainabilty_stage(path):
                 else:
                     deep_explain_img_lowest_error.append(i[index:])
             else:
-                print("Error")
+                print("Nothing")
     
     deep_explain = {}
     if config.getboolean('vis', 'deep_explain'):
@@ -250,6 +251,7 @@ def global_explainabilty_stage():
     SHAP_global_Explain_folder_words =  "In this pipeline, we see the summary plot of the test dataset, SHAP values for each feature. And a force plot showing the output value which is the prediction for that observation; Red/blue represents Features that push the prediction higher (to the right) are shown in red, and those pushing the prediction lower are in blue."
     source_citation = ["https://github.com/slundberg/shap, https://www.nature.com/articles/s41551-018-0304-0", "https://proceedings.neurips.cc/paper/2017/hash/8a20a8621978632d76c43dfd28b67767-Abstract.html"]
     about = "A game theoretic approach to explain the output of any machine learning model."
+    linearity_measure_words = "I have to still fill this.., for reference please visit `https://docs.seldon.io/projects/alibi/en/stable/methods/LinearityMeasure.html`"
 
     xai_explain = {}
     if config.getboolean('vis', 'xai_explain'):
@@ -283,12 +285,23 @@ def global_explainabilty_stage():
             'one_liner': SHAP_global_explain_words + SHAP_global_Explain_folder_words,
             'img_path': [mdl_pred[10:], mdl_pred2[10:]]
         }
-        ALE_explain.update(d1)
+        SHAP_global_explain.update(d1)
+
+    linearity_measure = {}
+    if config.getboolean('vis', 'linearity_measure'):
+        mdl_pred = sep.join([config.get('vis', 'vis_path_folder11'),
+                                     'linearity_measure.png'])
+        d1= {
+            'one_liner': linearity_measure_words,
+            'img_path': mdl_pred[10:]
+        }
+        linearity_measure.update(d1)
 
     json_report["global_explainabilty"] = {
         'xai_explain':xai_explain,
         'ALE_explain':ALE_explain,
-        'SHAP_global_explain':SHAP_global_explain
+        'SHAP_global_explain':SHAP_global_explain,
+        'linearity_measure':linearity_measure
     }
 
     return None
@@ -300,7 +313,10 @@ def json_dump_generation():
     # print(path)
     preprocessing_stage()
     modelling_stage()
-    local_explainabilty_stage(path)
+    try:
+        local_explainabilty_stage(path)
+    except Exception as e:
+        print(e)
     global_explainabilty_stage()
     # dumping the JSON file
     # print('json_report', json_report)
