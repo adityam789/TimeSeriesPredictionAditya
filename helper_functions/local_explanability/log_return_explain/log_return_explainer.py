@@ -34,3 +34,5 @@ def log_return_explain_function():
     if not os.path.exists(config.get('vis','vis_path_folder7')):
         os.makedirs( config.get('vis','vis_path_folder7'))
     plt.savefig(config.get('vis','vis_path_folder7') + '/log_return_explain.png')
+
+# log_return_explain_function()

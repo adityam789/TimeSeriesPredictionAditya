@@ -18,7 +18,7 @@
   },
   "local_explainabilty": {
     "deep_explain": {
-      "one_liner": "This shows attribution of every feature (Days in the time step) towards the target. It shows both the attribution by Integrated Gradients and Shapley Value sampling for a particular instance in the test dataset. Attribution is a real value R(x_i) for each input feature, with respect to a target neuron of interest. Positive value of feature shows that it contribute positively to the activation of the target output and vice-versa",
+      "one_liner": "This shows attribution of every feature (Days in the time step) towards the target. It shows both the attribution by Integrated Gradients and Shapley Value sampling for a particular instance in the test dataset. Attribution is a real value R(x_i) for each input feature, with respect to a target neuron of interest. Positive value of feature shows that it contribute positively to the activation of the target output and vice-versaIn this pipeline we display the deep explain plots for the 10 instances, 5 instances with the least absolute error and 5 instances with the maximum absolute error while training.",
       "highest error instances": {
         "img_path": [
           "local_exp_paths/deep_explain/min_error_instances/deep_explain_least_0.png",
@@ -39,7 +39,7 @@
       }
     },
     "lime_explain_minmax": {
-      "one_liner": "This shows the 10 highest weighted features/ days and 10 least weighted features of a particular instance while generating its local explanability. A local explanation is a local linear approximation of the model's behaviour around the vicinity of a particular instance.",
+      "one_liner": "This shows the 10 highest weighted features/ days and 10 least weighted features of a particular instance while generating its local explanability. A local explanation is a local linear approximation of the model's behaviour around the vicinity of a particular instance.In this pipeline we display the lime explain plots for the 10 instances, 5 instances with the least absolute error and 5 instances with the maximum absolute error while training.",
       "highest error instances": {
         "img_path": [
           "local_exp_paths/lime_explain/min_error_instances/lime_explain_least_0.png",
@@ -70,8 +70,22 @@
       "img_path": "global_exp_paths/xai_explain/xai_explain.png"
     },
     "ALE_explain": {
-      "one_liner": "",
-      "img_path": "global_exp_paths/ALE_explain/ALE_explain.png"
+      "one_liner": "This is a plot showing how features influence the prediction of a machine learning model on average. ALE plots show you how the model predictions change in a small `window` of the feature around v for data instances in that window. The x axis represents the quantiles of the distribution of the feature are used as the grid that defines the intervals; the y axis represents the ALE values of the instances in the grid.In this pipeline we see the 2 graph representing the 5 maximum contributing features ALE plots and 5 minimum contributing features ALE plots. It uses only 10 data instances of the test data but can be increased.",
+      "img_path": [
+        "global_exp_paths/ALE_explain/ALE_explain_max5_features.png",
+        "global_exp_paths/ALE_explain/ALE_explain_min5_features.png"
+      ]
+    },
+    "SHAP_global_explain": {
+      "one_liner": "This is a plot which shows the SHAP values using a kernel explainer, a specially-weighted local linear regression to estimate SHAP values for any model. The shap values are additive feature attributions which refers to the fact that the change of an outcome to be explained with respect to a baseline in different proportions to the model input features. The x axis represents the SHAP(SHapley Additive exPlanations) values and y-axis represents the feature/ day.In this pipeline, we see the summary plot of the test dataset, SHAP values for each feature. And a force plot showing the output value which is the prediction for that observation; Red/blue represents Features that push the prediction higher (to the right) are shown in red, and those pushing the prediction lower are in blue.",
+      "img_path": [
+        "global_exp_paths/shap_global_explain/shap_global_explain_summary_plot.png",
+        "global_exp_paths/shap_global_explain/shap_global_explain_force_plot.png"
+      ]
+    },
+    "linearity_measure": {
+      "one_liner": "I have to still fill this.., for reference please visit `https://docs.seldon.io/projects/alibi/en/stable/methods/LinearityMeasure.html`",
+      "img_path": "global_exp_paths/linearity_measure/linearity_measure.png"
     }
   }
 }

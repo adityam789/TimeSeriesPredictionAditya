@@ -58,3 +58,5 @@ def xai_explainer():
     plt.savefig(config.get('vis','vis_path_folder5') + '/xai_explain.png')
 
     # plt.show()
+
+# xai_explainer()

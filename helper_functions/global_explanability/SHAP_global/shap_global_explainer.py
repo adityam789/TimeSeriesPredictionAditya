@@ -60,3 +60,5 @@ def shap_global_explainer_function():
     # t = shap.force_plot(explainer.expected_value[0], shap_values[0],  link="logit", show=True)
     # print(t.keys())
     # print(t)
+
+# shap_global_explainer_function()
